@@ -15,5 +15,10 @@ make
 
 Para rodar o código:
 ~~~sh
-./AluminiumPlate
+./RPCSimulation
+~~~
+
+Para rodar com tudo:
+~~~sh
+./RPCSimulation run.mac
 ~~~

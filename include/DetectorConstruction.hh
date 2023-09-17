@@ -54,6 +54,7 @@ public:
 
 	//void SetMagField(G4double);
 	const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
+	const G4VPhysicalVolume* GetGasRPC() {return C2H2F4PhysicalVolume;};
 
 private:
 	G4LogicalVolume   *WorldLogicalVolume;

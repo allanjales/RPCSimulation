@@ -49,7 +49,6 @@ void HistoManager::FillHistos(const G4String& particleName,
 	G4double phi, G4double longitudinalPolarization,
 	G4double posX, G4double posY)
 {
-
 	G4int id = 1;
 	if (particleName=="gamma") id = 1;
 	else if (particleName=="e-") id = 5;
