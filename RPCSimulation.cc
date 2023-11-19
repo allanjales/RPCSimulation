@@ -28,8 +28,8 @@ int main(int argc,char** argv)
 
 	runManager->SetUserInitialization(det = new DetectorConstruction());
 	runManager->SetUserInitialization(new PhysicsList());
-	runManager->SetUserAction(prim = new PrimaryGeneratorAction());
 	
+	runManager->SetUserAction(prim = new PrimaryGeneratorAction());
 	runManager->SetUserAction(run = new RunAction(det, prim, histo));
 	runManager->SetUserAction(new EventAction(run));
 	runManager->SetUserAction(new SteppingAction(det, prim, run, histo));

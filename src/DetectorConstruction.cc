@@ -28,7 +28,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	G4Element* C = new G4Element("Carbon" ,  "C", 6, 12.01*g/mole);
 	G4Element* F = new G4Element("Fluor",    "F", 9, 19.00*g/mole);
 
-	G4Material* C2H2F4Material = new G4Material("GasEnRpc", 4089.26*g/m3, 3, kStateGas, 300.*kelvin, 1.*bar);
+	G4Material* C2H2F4Material = new G4Material("RpcGas", 4089.26*g/m3, 3, kStateGas, 300.*kelvin, 1.*bar);
 	C2H2F4Material->AddElement(C, 2); C2H2F4Material->AddElement(H, 2);
 	C2H2F4Material->AddElement(F, 4);
 
@@ -38,10 +38,10 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	G4Material* AluminiumMaterial = new G4Material("Aluminum", 13, 26.98*g/mole, 2.7*g/cm3);
 
 
-	// Air, Bakelite, Graphyte, Polyethylene
+	// Vacuum, Bakelite, Graphyte, Polyethylene
 
 	G4NistManager* nist = G4NistManager::Instance();
-	G4Material* AirMaterial = nist->FindOrBuildMaterial("G4_AIR");
+	G4Material* VacuumMaterial = nist->FindOrBuildMaterial("G4_Galactic");
 	G4Material* BakeliteMaterial = nist->FindOrBuildMaterial("G4_BAKELITE");
 	G4Material* GraphiteMaterial = nist->FindOrBuildMaterial("G4_GRAPHITE");
 	G4Material* PolyethyleneMaterial = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
@@ -53,7 +53,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	// World
 
 	auto WorldSolidVolume = new G4Box("WorldSolidVolume", 15.5*cm, 15.5*cm, 8.*mm);
-	WorldLogicalVolume = new G4LogicalVolume(WorldSolidVolume, AirMaterial, "WorldLogicalVolume", 0, 0, 0);
+	WorldLogicalVolume = new G4LogicalVolume(WorldSolidVolume, VacuumMaterial, "WorldLogicalVolume", 0, 0, 0);
 	{
 		auto attr = new G4VisAttributes(G4Colour(1.,1.,1.));
 		attr->SetForceWireframe();
