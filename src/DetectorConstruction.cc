@@ -52,7 +52,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
 	// World
 
-	auto WorldSolidVolume = new G4Box("WorldSolidVolume", 15.5*cm, 15.5*cm, 8.*mm);
+	auto WorldSolidVolume = new G4Box("WorldSolidVolume", 15.5*cm, 15.5*cm, 2.*cm);
 	WorldLogicalVolume = new G4LogicalVolume(WorldSolidVolume, VacuumMaterial, "WorldLogicalVolume", 0, 0, 0);
 	{
 		auto attr = new G4VisAttributes(G4Colour(1.,1.,1.));

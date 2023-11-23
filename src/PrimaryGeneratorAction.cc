@@ -7,8 +7,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 	G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("mu+");
 	particleGun->SetParticleDefinition(particle);
 	particleGun->SetParticleEnergy(1.0*GeV);
+	particleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm, 13.4*mm));
 	particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.0));
-	particleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm, 3.5*mm));
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()

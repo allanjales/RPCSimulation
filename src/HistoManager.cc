@@ -17,15 +17,10 @@ HistoManager::HistoManager()
 	AnalysisManager->CreateNtupleDColumn("fPositionX");
 	AnalysisManager->CreateNtupleDColumn("fPositionY");
 	AnalysisManager->FinishNtuple(0); //Ntuple nº 0
-
-	//histoMessenger = new HistoMessenger(this);
 }
-
 
 HistoManager::~HistoManager()
-{
-	//delete histoMessenger;
-}
+{}
 
 void HistoManager::Book(G4String fileName)
 {
@@ -44,10 +39,8 @@ void HistoManager::Save()
 }
 
 
-void HistoManager::FillHistos(const G4String& particleName,
-	G4double kinEnergy, G4double costheta,
-	G4double phi, G4double longitudinalPolarization,
-	G4double posX, G4double posY)
+void HistoManager::FillData(const G4String &particleName, G4ThreeVector position,
+		G4double kinEnergy, G4double costheta, G4double phi, G4ThreeVector polarization)
 {
 	G4int id = 1;
 	if (particleName=="gamma") id = 1;
@@ -55,16 +48,13 @@ void HistoManager::FillHistos(const G4String& particleName,
 	else if (particleName=="e+") id = 9;
 	else return;
 
-	//if (costheta >= 1.) costheta = .99999999;
-	//if (costheta < -1.) costheta = -1.;
-
 	G4AnalysisManager *AnalysisManager = G4AnalysisManager::Instance();
 	AnalysisManager->FillNtupleIColumn(0, 0, id);
 	AnalysisManager->FillNtupleDColumn(0, 1, kinEnergy);
 	AnalysisManager->FillNtupleDColumn(0, 2, costheta);
 	AnalysisManager->FillNtupleDColumn(0, 3, phi);
-	AnalysisManager->FillNtupleDColumn(0, 4, longitudinalPolarization);
-	AnalysisManager->FillNtupleDColumn(0, 5, posX);
-	AnalysisManager->FillNtupleDColumn(0, 6, posY);
+	AnalysisManager->FillNtupleDColumn(0, 4, polarization.z());
+	AnalysisManager->FillNtupleDColumn(0, 5, position.x());
+	AnalysisManager->FillNtupleDColumn(0, 6, position.y());
 	AnalysisManager->AddNtupleRow(0);
 }

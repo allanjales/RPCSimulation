@@ -12,10 +12,8 @@ public:
 
 	void Book(G4String fileName);
 	void Save();
-	void FillHistos(const G4String &particleName, 
-		G4double kinEnergy, G4double costheta, G4double phi,
-		G4double longitudinalPolarization,
-		G4double posX, G4double posY);
+	void FillData(const G4String &particleName, G4ThreeVector position,
+		G4double kinEnergy, G4double costheta, G4double phi, G4ThreeVector polarization);
 private:
 	G4AnalysisManager *AnalysisManager;
 };

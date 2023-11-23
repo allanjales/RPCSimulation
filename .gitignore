@@ -1,10 +1,13 @@
 # Ignora a pasta de build
 build/*
 
-#Ignora a pasta de build multi-thread
+# Ignora a pasta de build multi-thread
 buildmt/*
 
 # Ignora resultados e qualquer imagem ou pdf
 *.root
 *.png
 *.pdf
+
+# Ignora arquivos do vscode
+.vscode/*

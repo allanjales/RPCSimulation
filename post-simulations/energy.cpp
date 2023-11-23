@@ -3,7 +3,7 @@ using namespace RooFit;
 
 void energy()
 {
-	TFile* file0    = TFile::Open("../build/results/output_1.root");
+	TFile* file0    = TFile::Open("../build/results/output_0.root");
 	TTree* DataTree = (TTree*)file0->Get(("Particles"));
 	
 	RooRealVar  ParticleID               ("fParticleID",               "ParticleID", 0, RooNumber::infinity());
@@ -73,6 +73,29 @@ void energy()
 		text->DrawLatex(0.6, 0.80, Form("Out of range = %d", total - inRange));
 		c1->SetLogy();
 		c1->SaveAs("electrons+log.png");
+	}
+
+	//
+	// Full Energy Log Plot
+	//
+	{
+		TCanvas* c1  = new TCanvas;
+		RooPlot* frame = KinectEnergy.frame(0., 1.);
+		frame->SetTitle((string("Electrons")+sufix).c_str());
+		DataGamma.plotOn(frame, DrawOption("BX"), FillColor(color));
+		//frame->GetXaxis()->SetRangeUser(0, 0.1);
+		frame->SetMinimum(1);
+		frame->SetMaximum(1e5);
+		frame->GetXaxis()->SetTitle("Energy (MeV)");
+		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
+		frame->Draw("B");
+		int inRange = DataGamma.sumEntries(
+			(to_string(frame->GetXaxis()->GetXmin()) + "<= fKinectEnergy && fKinectEnergy <=" 
+			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
+		text->DrawLatex(0.6, 0.85, Form("Entries = %d", inRange));
+		text->DrawLatex(0.6, 0.80, Form("Out of range = %d", total - inRange));
+		c1->SetLogy();
+		c1->SaveAs("electrons+logfull.png");
 	}
 
 	// 2D Hist
