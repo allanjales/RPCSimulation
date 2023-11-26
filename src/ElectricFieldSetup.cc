@@ -1,52 +1,34 @@
 #include "ElectricFieldSetup.hh"
+#include <G4UnitsTable.hh>
 
 ElectricFieldSetup::ElectricFieldSetup()
 : fChordFinder(), fStepper(), fIntgrDriver()
 {
-	fEMfield = new G4UniformElectricField(G4ThreeVector(0., 0., -4.5*kilovolt/mm));
-	//fFieldMessenger = new FieldMessenger(this) ;
+	fEMfield  = new G4UniformElectricField(G4ThreeVector(0., 0., -4.5*kilovolt/mm));
 	fEquation = new G4EqMagElectricField(fEMfield);
-	fMinStep = 0.01*mm;
+	fMinStep  = 0.01*mm;
 	fStepperType = 4; // ClassicalRK4, the default stepper
-	fFieldManager = GetGlobalFieldManager();
-	UpdateField();
-}
-
-ElectricFieldSetup::ElectricFieldSetup(G4ThreeVector pFV)
-: fChordFinder(), fStepper(), fIntgrDriver()
-{
-	fEMfield = new G4UniformElectricField(pFV);
-	// GetGlobalFieldManager()->CreateChordFinder(this);
-	//fFieldMessenger = new FieldMessenger(this) ;
-	fEquation = new G4EqMagElectricField(fEMfield);
-	fMinStep = 0.01*mm;
-	fStepperType = 4; // ClassicalRK4, the default stepper
+	
 	fFieldManager = GetGlobalFieldManager();
 	UpdateField();
 }
 
 ElectricFieldSetup::~ElectricFieldSetup()
 {
-	if(fChordFinder)
-		delete fChordFinder;
-	if(fStepper)
-		delete fStepper;
-	if(fEquation)
-		delete fEquation;
-	if(fEMfield)
-		delete fEMfield;
+	if (fChordFinder) delete fChordFinder;
+	if (fStepper)     delete fStepper;
+	if (fEquation)    delete fEquation;
+	if (fEMfield)     delete fEMfield;
 }
 
 void ElectricFieldSetup::UpdateField()
 {
 	SetStepper();
-	G4cout << "The minimal step is equal to " << fMinStep/mm << " mm" << G4endl;
+	G4cout << "The minimal step is equal to " << G4BestUnit(fMinStep, "Length") << G4endl;
 	
 	fFieldManager->SetDetectorField(fEMfield);
 	
-	if(fChordFinder)
-		delete fChordFinder;
-	// fChordFinder = new G4ChordFinder(fEMfield, fMinStep, fStepper);
+	if (fChordFinder) delete fChordFinder;
 	
 	fIntgrDriver = new G4MagInt_Driver(fMinStep, fStepper, fStepper->GetNumberOfVariables());
 	fChordFinder = new G4ChordFinder(fIntgrDriver);
@@ -113,7 +95,7 @@ void ElectricFieldSetup::SetStepper()
 
 void ElectricFieldSetup::SetFieldValue(G4double fieldValue)
 {
-	G4ThreeVector fieldVector(0., 0., 0.);
+	G4ThreeVector fieldVector(0., 0., fieldValue);
 	SetFieldValue(fieldVector);
 }
 
@@ -122,22 +104,19 @@ void ElectricFieldSetup::SetFieldValue(G4ThreeVector fieldVector)
 	// Find the Field Manager for the global field
 	G4FieldManager* fieldMgr = GetGlobalFieldManager();
 
+	if (fEMfield) delete fEMfield;
 	if(fieldVector != G4ThreeVector(0.,0.,0.))
 	{
-		if(fEMfield)
-			delete fEMfield;
 		fEMfield = new G4UniformElectricField(fieldVector);
 	
 		fEquation->SetFieldObj(fEMfield);
-		// UpdateField();
+		UpdateField();
 		fieldMgr->SetDetectorField(fEMfield);
 	}
 	else
 	{
-		// If the new field's value is Zero, then it is best to
+		// If the new field's value is zero, then it is best to
 		// insure that it is not used for propagation.
-		if(fEMfield)
-			delete fEMfield;
 		fEMfield = 0;
 		fEquation->SetFieldObj(fEMfield);
 	}

@@ -10,12 +10,13 @@ HistoManager::HistoManager()
 
 	AnalysisManager->CreateNtuple("Particles", "Particles");
 	AnalysisManager->CreateNtupleIColumn("fParticleID");
+	AnalysisManager->CreateNtupleDColumn("fPositionX");
+	AnalysisManager->CreateNtupleDColumn("fPositionY");
+	AnalysisManager->CreateNtupleDColumn("fPositionZ");
 	AnalysisManager->CreateNtupleDColumn("fKinectEnergy");
 	AnalysisManager->CreateNtupleDColumn("fCosTheta");
 	AnalysisManager->CreateNtupleDColumn("fPhi");
 	AnalysisManager->CreateNtupleDColumn("fLongitudinalPolarization");
-	AnalysisManager->CreateNtupleDColumn("fPositionX");
-	AnalysisManager->CreateNtupleDColumn("fPositionY");
 	AnalysisManager->FinishNtuple(0); //Ntuple nº 0
 }
 
@@ -38,23 +39,18 @@ void HistoManager::Save()
 	AnalysisManager->CloseFile();
 }
 
-
-void HistoManager::FillData(const G4String &particleName, G4ThreeVector position,
+void HistoManager::FillData(G4ParticleDefinition* particle, G4ThreeVector position,
 		G4double kinEnergy, G4double costheta, G4double phi, G4ThreeVector polarization)
 {
-	G4int id = 1;
-	if (particleName=="gamma") id = 1;
-	else if (particleName=="e-") id = 5;
-	else if (particleName=="e+") id = 9;
-	else return;
-
 	G4AnalysisManager *AnalysisManager = G4AnalysisManager::Instance();
-	AnalysisManager->FillNtupleIColumn(0, 0, id);
-	AnalysisManager->FillNtupleDColumn(0, 1, kinEnergy);
-	AnalysisManager->FillNtupleDColumn(0, 2, costheta);
-	AnalysisManager->FillNtupleDColumn(0, 3, phi);
-	AnalysisManager->FillNtupleDColumn(0, 4, polarization.z());
-	AnalysisManager->FillNtupleDColumn(0, 5, position.x());
-	AnalysisManager->FillNtupleDColumn(0, 6, position.y());
+	
+	AnalysisManager->FillNtupleIColumn(0, 0, particle->GetPDGEncoding());
+	AnalysisManager->FillNtupleDColumn(0, 1, position.x());
+	AnalysisManager->FillNtupleDColumn(0, 2, position.y());
+	AnalysisManager->FillNtupleDColumn(0, 3, position.z());
+	AnalysisManager->FillNtupleDColumn(0, 4, kinEnergy);
+	AnalysisManager->FillNtupleDColumn(0, 5, costheta);
+	AnalysisManager->FillNtupleDColumn(0, 6, phi);
+	AnalysisManager->FillNtupleDColumn(0, 7, polarization.z());
 	AnalysisManager->AddNtupleRow(0);
 }

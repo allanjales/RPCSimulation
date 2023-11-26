@@ -20,15 +20,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	G4StepPoint* prePoint = aStep->GetPreStepPoint();
 	G4StepPoint* endPoint = aStep->GetPostStepPoint();
 
-	G4String procName = endPoint->GetProcessDefinedStep()->GetProcessName();
-	runAction->CountProcesses(procName);
-
 	// Is in the gas box
 	if (prePoint->GetTouchableHandle()->GetVolume() == detector->GetGasRPC() 
 	&& endPoint->GetTouchableHandle()->GetVolume() == detector->GetGasRPC())
 	{
 		G4Track* aTrack = aStep->GetTrack();
-		G4String particleName = aTrack->GetDynamicParticle()->GetDefinition()->GetParticleName();
+		G4ParticleDefinition* particle = aTrack->GetDynamicParticle()->GetDefinition();
 	
 		G4ThreeVector prePosition = prePoint->GetPosition();
 		G4ThreeVector endPosition = endPoint->GetPosition();
@@ -45,6 +42,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 		G4ThreeVector polarization = endPoint->GetPolarization();
 
-		histoManager->FillData(particleName, prePosition, kinEnergy, costheta, phi, polarization);
+		histoManager->FillData(particle, prePosition, kinEnergy, costheta, phi, polarization);
 	}
 }

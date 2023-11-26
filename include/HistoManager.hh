@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 #include "G4AnalysisManager.hh"
+#include "G4ParticleDefinition.hh"
 
 class HistoManager
 {
@@ -12,7 +13,7 @@ public:
 
 	void Book(G4String fileName);
 	void Save();
-	void FillData(const G4String &particleName, G4ThreeVector position,
+	void FillData(G4ParticleDefinition* particle, G4ThreeVector position,
 		G4double kinEnergy, G4double costheta, G4double phi, G4ThreeVector polarization);
 private:
 	G4AnalysisManager *AnalysisManager;
