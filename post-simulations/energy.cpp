@@ -4,17 +4,18 @@ using namespace RooFit;
 void energy()
 {
 	TFile* file0    = TFile::Open("../build/results/output_0.root");
-	TTree* DataTree = (TTree*)file0->Get(("Particles"));
+	TTree* DataTree = (TTree*)file0->Get(("DetectedParticles"));
 	
-	RooRealVar  ParticleID               ("fParticleID",               "ParticleID", 0, RooNumber::infinity());
-	RooRealVar  KinectEnergy             ("fKinectEnergy",             "KinectEnergy", 0, RooNumber::infinity());
-	RooRealVar  CosTheta                 ("fCosTheta",                 "CosTheta", -1., 1.);
-	RooRealVar  Phi                      ("fPhi",                      "Phi", -TMath::Pi(), TMath::Pi());
-	RooRealVar  LongitudinalPolarization ("fLongitudinalPolarization", "LongitudinalPolarization", -RooNumber::infinity(), RooNumber::infinity());
-	RooRealVar  PositionX                ("fPositionX",                "PositionX", -RooNumber::infinity(), RooNumber::infinity());
-	RooRealVar  PositionY                ("fPositionY",                "PositionY", -RooNumber::infinity(), RooNumber::infinity());
-
-	RooDataSet DataGamma("data", "data", DataTree, RooArgSet(ParticleID, KinectEnergy, CosTheta, Phi, PositionX, PositionY), "fParticleID==5");
+	RooRealVar ParticleID               ("fParticleID",               "ParticleID", 0, RooNumber::infinity());
+	RooRealVar RegionID                 ("fRegionID",                 "RegionID", 0, RooNumber::infinity());
+	RooRealVar PositionX                ("fPositionX",                "PositionX", -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar PositionY                ("fPositionY",                "PositionY", -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar PositionZ                ("fPositionZ",                "PositionZ", -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar KinectEnergy             ("fKinectEnergy",             "KinectEnergy", 0, RooNumber::infinity());
+	RooRealVar CosTheta                 ("fCosTheta",                 "CosTheta", -1., 1.);
+	RooRealVar Phi                      ("fPhi",                      "Phi", -TMath::Pi(), TMath::Pi());
+	RooDataSet DataGamma("data", "data", DataTree,
+	RooArgSet(ParticleID, RegionID, PositionX, PositionY, PositionY, KinectEnergy, CosTheta, Phi), "fParticleID==11 && fRegionID==0");
 
 	cout << DataTree->GetEntries() << endl;
 

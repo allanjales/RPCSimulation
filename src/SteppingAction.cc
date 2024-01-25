@@ -8,8 +8,8 @@
 #include "G4PolarizationHelper.hh"
 
 SteppingAction::SteppingAction(DetectorConstruction* det, 
-	PrimaryGeneratorAction* prim, RunAction* RuAct, HistoManager* Hist)
-: detector(det), primary(prim), runAction(RuAct), histoManager(Hist)
+	PrimaryGeneratorAction* prim, RunAction* ra, HistoManager* hist)
+: detector(det), primary(prim), runAction(ra), histoManager(hist)
 {}
 
 SteppingAction::~SteppingAction()
@@ -24,24 +24,62 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	if (prePoint->GetTouchableHandle()->GetVolume() == detector->GetGasRPC() 
 	&& endPoint->GetTouchableHandle()->GetVolume() == detector->GetGasRPC())
 	{
-		G4Track* aTrack = aStep->GetTrack();
-		G4ParticleDefinition* particle = aTrack->GetDynamicParticle()->GetDefinition();
-	
-		G4ThreeVector prePosition = prePoint->GetPosition();
-		G4ThreeVector endPosition = endPoint->GetPosition();
-
-		G4double kinEnergy = endPoint->GetKineticEnergy();
-
-		G4ThreeVector beamDirectionVec = primary->GetParticleGun()->GetParticleMomentumDirection();
-		G4ThreeVector directionVec     = endPoint->GetMomentumDirection();
-		G4double costheta = directionVec * beamDirectionVec;
-
-		G4double xDirection = directionVec * G4PolarizationHelper::GetParticleFrameX(beamDirectionVec);
-		G4double yDirection = directionVec * G4PolarizationHelper::GetParticleFrameY(beamDirectionVec);
-		G4double phi = std::atan2(yDirection, xDirection);
-
-		G4ThreeVector polarization = endPoint->GetPolarization();
-
-		histoManager->FillData(particle, prePosition, kinEnergy, costheta, phi, polarization);
+		StoreParticleData(aStep, 0);
 	}
+
+	if      (ParticlePassesZPlane(prePoint, endPoint, -3.4 *mm)) StoreParticleData(aStep, 1);
+	else if (ParticlePassesZPlane(prePoint, endPoint, -3.2 *mm)) StoreParticleData(aStep, 2);
+	else if (ParticlePassesZPlane(prePoint, endPoint, -3.0 *mm)) StoreParticleData(aStep, 3);
+	else if (ParticlePassesZPlane(prePoint, endPoint, -1.0 *mm)) StoreParticleData(aStep, 4);
+	else if (ParticlePassesZPlane(prePoint, endPoint,  1.0 *mm)) StoreParticleData(aStep, 5);
+	else if (ParticlePassesZPlane(prePoint, endPoint,  3.0 *mm)) StoreParticleData(aStep, 6);
+	else if (ParticlePassesZPlane(prePoint, endPoint,  3.2 *mm)) StoreParticleData(aStep, 7);
+	else if (ParticlePassesZPlane(prePoint, endPoint,  3.4 *mm)) StoreParticleData(aStep, 8);
+	else if (ParticlePassesZPlane(prePoint, endPoint,  3.44*mm)) StoreParticleData(aStep, 9);
+}
+
+bool SteppingAction::ParticlePassesZPlane(G4Track* track, G4double zPlane)
+{
+	G4StepPoint* prePoint = track->GetStep()->GetPreStepPoint();
+	G4StepPoint* endPoint = track->GetStep()->GetPostStepPoint();
+
+	return ParticlePassesZPlane(prePoint, endPoint, zPlane);
+}
+
+bool SteppingAction::ParticlePassesZPlane(G4StepPoint* prePoint, G4StepPoint* endPoint, G4double zPlane)
+{
+	G4double preZ = prePoint->GetPosition().z();
+	G4double endZ = endPoint->GetPosition().z();
+
+	if (preZ < zPlane && endZ > zPlane)
+		return true;
+	return false;
+}
+
+void SteppingAction::StoreParticleData(const G4Step* aStep, G4int regionID)
+{
+	G4StepPoint* prePoint = aStep->GetPreStepPoint();
+	G4StepPoint* endPoint = aStep->GetPostStepPoint();
+
+	G4Track* aTrack = aStep->GetTrack();
+	G4ParticleDefinition* particle = aTrack->GetDynamicParticle()->GetDefinition();
+
+	G4int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+
+	G4ThreeVector prePosition = prePoint->GetPosition();
+	G4ThreeVector endPosition = endPoint->GetPosition();
+
+	G4double kinEnergy = endPoint->GetKineticEnergy();
+
+	G4ThreeVector beamDirectionVec = primary->GetParticleGun()->GetParticleMomentumDirection();
+	G4ThreeVector directionVec     = endPoint->GetMomentumDirection();
+	G4double costheta = directionVec * beamDirectionVec;
+
+	G4double xDirection = directionVec * G4PolarizationHelper::GetParticleFrameX(beamDirectionVec);
+	G4double yDirection = directionVec * G4PolarizationHelper::GetParticleFrameY(beamDirectionVec);
+	G4double phi = std::atan2(yDirection, xDirection);
+
+	G4double stepLength = aStep->GetStepLength();
+
+	histoManager->FillData(particle, eventID, regionID, endPosition, stepLength, kinEnergy, costheta, phi);
 }

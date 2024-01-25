@@ -3,11 +3,14 @@
 
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
+#include "G4StepLimiterPhysics.hh"
 
 PhysicsList::PhysicsList()
 {
-	defaultCutValue = 0.1*mm;
+	defaultCutValue = 0.01*mm;
 	SetVerboseLevel(1);
+
+	RegisterPhysics(new G4StepLimiterPhysics());
 }
 
 PhysicsList::~PhysicsList() {}
@@ -125,11 +128,8 @@ void PhysicsList::ConstructEM()
 			pmanager->AddProcess(new G4MuBremsstrahlung,     -1, 3, 3);
 			pmanager->AddProcess(new G4MuPairProduction,     -1, 4, 4);
 		}
-		else if (!particle->IsShortLived()
-			&& particle->GetPDGCharge() != 0.
-			&& particle->GetParticleName() != "chargedgiantino")
+		else if (particle->GetPDGCharge() != 0)
 		{
-			//All other particles except geantino
 			pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
 			pmanager->AddProcess(new G4hIonisation,         -1, 2, 2);
 		}

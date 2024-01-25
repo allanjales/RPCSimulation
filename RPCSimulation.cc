@@ -57,7 +57,6 @@ int main(int argc,char** argv)
 		UImanager->ApplyCommand(command+fileName);
 	}
 
-
 	// Job termination
 	if (visManager)
 		delete visManager;

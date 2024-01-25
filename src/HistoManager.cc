@@ -8,15 +8,17 @@ HistoManager::HistoManager()
 {
 	G4AnalysisManager *AnalysisManager = G4AnalysisManager::Instance();
 
-	AnalysisManager->CreateNtuple("Particles", "Particles");
+	AnalysisManager->CreateNtuple("DetectedParticles", "DetectedParticles");
 	AnalysisManager->CreateNtupleIColumn("fParticleID");
+	AnalysisManager->CreateNtupleIColumn("fEvent");
+	AnalysisManager->CreateNtupleIColumn("fRegionID");
 	AnalysisManager->CreateNtupleDColumn("fPositionX");
 	AnalysisManager->CreateNtupleDColumn("fPositionY");
 	AnalysisManager->CreateNtupleDColumn("fPositionZ");
 	AnalysisManager->CreateNtupleDColumn("fKinectEnergy");
 	AnalysisManager->CreateNtupleDColumn("fCosTheta");
 	AnalysisManager->CreateNtupleDColumn("fPhi");
-	AnalysisManager->CreateNtupleDColumn("fLongitudinalPolarization");
+	AnalysisManager->CreateNtupleDColumn("fStepLength");
 	AnalysisManager->FinishNtuple(0); //Ntuple nº 0
 }
 
@@ -39,18 +41,20 @@ void HistoManager::Save()
 	AnalysisManager->CloseFile();
 }
 
-void HistoManager::FillData(G4ParticleDefinition* particle, G4ThreeVector position,
-		G4double kinEnergy, G4double costheta, G4double phi, G4ThreeVector polarization)
+void HistoManager::FillData(G4ParticleDefinition* particle, G4int eventID, G4int regionID,
+	G4ThreeVector position, G4double stepLength, G4double kinEnergy, G4double costheta, G4double phi)
 {
 	G4AnalysisManager *AnalysisManager = G4AnalysisManager::Instance();
 	
 	AnalysisManager->FillNtupleIColumn(0, 0, particle->GetPDGEncoding());
-	AnalysisManager->FillNtupleDColumn(0, 1, position.x());
-	AnalysisManager->FillNtupleDColumn(0, 2, position.y());
-	AnalysisManager->FillNtupleDColumn(0, 3, position.z());
-	AnalysisManager->FillNtupleDColumn(0, 4, kinEnergy);
-	AnalysisManager->FillNtupleDColumn(0, 5, costheta);
-	AnalysisManager->FillNtupleDColumn(0, 6, phi);
-	AnalysisManager->FillNtupleDColumn(0, 7, polarization.z());
+	AnalysisManager->FillNtupleIColumn(0, 1, eventID);
+	AnalysisManager->FillNtupleIColumn(0, 2, regionID);
+	AnalysisManager->FillNtupleDColumn(0, 3, position.x());
+	AnalysisManager->FillNtupleDColumn(0, 4, position.y());
+	AnalysisManager->FillNtupleDColumn(0, 5, position.z());
+	AnalysisManager->FillNtupleDColumn(0, 6, kinEnergy);
+	AnalysisManager->FillNtupleDColumn(0, 7, costheta);
+	AnalysisManager->FillNtupleDColumn(0, 8, phi);
+	AnalysisManager->FillNtupleDColumn(0, 9, stepLength);
 	AnalysisManager->AddNtupleRow(0);
 }

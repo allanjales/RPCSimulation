@@ -4,16 +4,14 @@ DetectorConstruction::DetectorConstruction()
 : WorldLogicalVolume(), BakeliteLogicalVolume(), GraphiteLogicalVolume(),
 PolyethyleneLogicalVolume(), C2H2F4LogicalVolume(), AluminiumLogicalVolume(),
 WorldPhysicalVolume(), BakelitePhysicalVolume(), GraphitePhysicalVolume(),
-PolyethylenePhysicalVolume(), C2H2F4PhysicalVolume(), AluminiumPhysicalVolume(), fEmFieldSetup()
+PolyethylenePhysicalVolume(), C2H2F4PhysicalVolume(), AluminiumPhysicalVolume()
 {
 	fDetectorMessenger = new DetectorMessenger(this);
-	fEmFieldSetup = new ElectricFieldSetup() ;
 }
 
 DetectorConstruction::~DetectorConstruction()
 {
 	delete fDetectorMessenger;
-	delete fEmFieldSetup;
 }
 
 G4VPhysicalVolume *DetectorConstruction::Construct()
@@ -29,7 +27,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	G4Element* F = new G4Element("Fluor",    "F", 9, 19.00*g/mole);
 
 	G4Material* C2H2F4Material = new G4Material("RpcGas", 4089.26*g/m3, 3, kStateGas, 300.*kelvin, 1.*bar);
-	C2H2F4Material->AddElement(C, 2); C2H2F4Material->AddElement(H, 2);
+	C2H2F4Material->AddElement(C, 2);
+	C2H2F4Material->AddElement(H, 2);
 	C2H2F4Material->AddElement(F, 4);
 
 
@@ -119,6 +118,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	C2H2F4PhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), C2H2F4LogicalVolume,
 		"C2H2F4PhysicalVolume", WorldLogicalVolume, false, 0);
 
+	// Creating region
 	G4Region* C2H2F4Region = new G4Region("C2H2F4LogicalVolume");
 	C2H2F4LogicalVolume->SetRegion(C2H2F4Region);
 	C2H2F4Region->AddRootLogicalVolume(C2H2F4LogicalVolume);
@@ -137,4 +137,36 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"AluminiumPhysicalVolume", WorldLogicalVolume, false, 0);
 
 	return WorldPhysicalVolume;
+}
+
+void DetectorConstruction::ConstructSDandField()
+{
+	// Set global eletric field
+	G4UniformElectricField* globalField = new G4UniformElectricField(G4ThreeVector(0., 0., 0.*kilovolt/mm));
+	G4FieldManager* globalFieldManager = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+	globalFieldManager->SetDetectorField(globalField);
+	CreateChordFinder(globalFieldManager, globalField);
+
+	// Set local eletric field
+	G4UniformElectricField* localField = new G4UniformElectricField(G4ThreeVector(0., 0., -4.5*kilovolt/mm));
+	G4FieldManager* localFieldManager = new G4FieldManager();
+	localFieldManager->SetDetectorField(localField);
+	CreateChordFinder(localFieldManager, localField);
+
+	C2H2F4LogicalVolume->SetFieldManager(localFieldManager, true);
+	C2H2F4LogicalVolume->SetFieldManager(localFieldManager, true);
+}
+
+void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4ElectricField* field)
+{
+	auto globalFieldEq = new G4EqMagElectricField(field);
+
+	auto fStepper = new G4ClassicalRK4(globalFieldEq, 8);
+	G4cout << "G4ClassicalRK4 (default) is called" << G4endl;
+
+	float fMinStep  = 0.01*mm;
+	G4cout << "The minimal step is equal to " << G4BestUnit(fMinStep, "Length") << G4endl;
+	auto fIntgrDriver = new G4MagInt_Driver(fMinStep, fStepper, fStepper->GetNumberOfVariables());
+	auto fChordFinder = new G4ChordFinder(fIntgrDriver);
+	fieldManager->SetChordFinder(fChordFinder);
 }

@@ -13,8 +13,7 @@ public:
 
 	void Book(G4String fileName);
 	void Save();
-	void FillData(G4ParticleDefinition* particle, G4ThreeVector position,
-		G4double kinEnergy, G4double costheta, G4double phi, G4ThreeVector polarization);
+	void FillData(G4ParticleDefinition*, G4int, G4int, G4ThreeVector, G4double, G4double, G4double, G4double);
 private:
 	G4AnalysisManager *AnalysisManager;
 };
