@@ -82,26 +82,28 @@ public:
 	const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
 	const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
 
+	G4UserLimits*      UserLimits;
+
 private:
-	G4LogicalVolume   *WorldLogicalVolume;
-	G4VPhysicalVolume *WorldPhysicalVolume;
+	G4LogicalVolume*   WorldLogicalVolume;
+	G4VPhysicalVolume* WorldPhysicalVolume;
 
-	G4LogicalVolume   *BakeliteLogicalVolume;
-	G4VPhysicalVolume *BakelitePhysicalVolume;
+	G4LogicalVolume*   BakeliteLogicalVolume;
+	G4VPhysicalVolume* BakelitePhysicalVolume;
 
-	G4LogicalVolume   *GraphiteLogicalVolume;
-	G4VPhysicalVolume *GraphitePhysicalVolume;
+	G4LogicalVolume*   GraphiteLogicalVolume;
+	G4VPhysicalVolume* GraphitePhysicalVolume;
 
-	G4LogicalVolume   *PolyethyleneLogicalVolume;
-	G4VPhysicalVolume *PolyethylenePhysicalVolume;
+	G4LogicalVolume*   PolyethyleneLogicalVolume;
+	G4VPhysicalVolume* PolyethylenePhysicalVolume;
 
-	G4LogicalVolume   *GasLogicalVolume;
-	G4VPhysicalVolume *GasPhysicalVolume;
+	G4LogicalVolume*   GasLogicalVolume;
+	G4VPhysicalVolume* GasPhysicalVolume;
 	
-	G4LogicalVolume   *AluminiumLogicalVolume;
-	G4VPhysicalVolume *AluminiumPhysicalVolume;
-
-	DetectorMessenger *fDetectorMessenger;
+	G4LogicalVolume*   AluminiumLogicalVolume;
+	G4VPhysicalVolume* AluminiumPhysicalVolume;
+	
+	DetectorMessenger* fDetectorMessenger;
 
 	void CreateChordFinder(G4FieldManager*, G4ElectricField*);
 };

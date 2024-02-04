@@ -20,6 +20,9 @@ public:
 
 private:
 	DetectorConstruction*      fDetector;
+
+	G4UIdirectory*             eventDir;
+	G4UIcmdWithADoubleAndUnit* PrintCmd;
 };
 
 #endif

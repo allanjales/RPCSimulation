@@ -9,10 +9,16 @@ WorldPhysicalVolume(), BakelitePhysicalVolume(), GraphitePhysicalVolume(),
 PolyethylenePhysicalVolume(), GasPhysicalVolume(), AluminiumPhysicalVolume()
 {
 	fDetectorMessenger = new DetectorMessenger(this);
+
+	// Step Limiter for each material
+	G4double maxStepLength = 0.04/100*mm;
+	UserLimits = new G4UserLimits(maxStepLength);
+	G4cout << "Max step length in the world set to " << G4BestUnit(maxStepLength, "Length") << G4endl;
 }
 
 DetectorConstruction::~DetectorConstruction()
 {
+	delete UserLimits;
 	delete fDetectorMessenger;
 }
 
@@ -47,9 +53,6 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	G4Material* GraphiteMaterial = nist->FindOrBuildMaterial("G4_GRAPHITE");
 	G4Material* PolyethyleneMaterial = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
 
-	// Step Limiter for each material
-	G4UserLimits* userLimits = new G4UserLimits(0.04/100*mm);
-
 	// ----------------
 	// Setup
 	// ----------------
@@ -64,7 +67,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		WorldLogicalVolume->SetVisAttributes(attr);
 	}
 	WorldPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(), WorldLogicalVolume, "WorldPhysicalVolume", 0, false, 0);
-	WorldLogicalVolume->SetUserLimits(userLimits);
+	WorldLogicalVolume->SetUserLimits(UserLimits);
 
 	// Bakelites
 
@@ -79,7 +82,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"BakelitePhysicalVolume", WorldLogicalVolume, false, 0);
 	BakelitePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 2.*mm), BakeliteLogicalVolume,
 		"BakelitePhysicalVolume", WorldLogicalVolume, false, 1);
-	BakeliteLogicalVolume->SetUserLimits(userLimits);
+	BakeliteLogicalVolume->SetUserLimits(UserLimits);
 
 
 	// Graphite
@@ -95,7 +98,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"GraphitePhysicalVolume", WorldLogicalVolume, false, 0);
 	GraphitePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 3.1*mm), GraphiteLogicalVolume,
 		"GraphitePhysicalVolume", WorldLogicalVolume, false, 1);
-	GraphiteLogicalVolume->SetUserLimits(userLimits);
+	GraphiteLogicalVolume->SetUserLimits(UserLimits);
 
 
 	// Polyethylene
@@ -111,7 +114,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"PolyethylenePhysicalVolume", WorldLogicalVolume, false, 0);
 	PolyethylenePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 3.3*mm), PolyethyleneLogicalVolume,
 		"PolyethylenePhysicalVolume", WorldLogicalVolume, false, 1);
-	PolyethyleneLogicalVolume->SetUserLimits(userLimits);
+	PolyethyleneLogicalVolume->SetUserLimits(UserLimits);
 
 
 	// C2H2F4
@@ -125,7 +128,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	}
 	GasPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), GasLogicalVolume,
 		"GasPhysicalVolume", WorldLogicalVolume, false, 0);
-	GasLogicalVolume->SetUserLimits(userLimits);
+	GasLogicalVolume->SetUserLimits(UserLimits);
 
 
 	// Aluminium Plate
@@ -139,7 +142,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	}
 	AluminiumPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., -3.42*mm), AluminiumLogicalVolume,
 		"AluminiumPhysicalVolume", WorldLogicalVolume, false, 0);
-	AluminiumLogicalVolume->SetUserLimits(userLimits);
+	AluminiumLogicalVolume->SetUserLimits(UserLimits);
 
 
 	return WorldPhysicalVolume;

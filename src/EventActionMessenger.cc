@@ -11,7 +11,7 @@ EventActionMessenger::EventActionMessenger(EventAction* EventAction)
 	eventDir = new G4UIdirectory("/RPCSim/event/");
 	eventDir ->SetGuidance("event control");
 
-	PrintCmd = new G4UIcmdWithAnInteger("/RPCSim/event/printModule",this);
+	PrintCmd = new G4UIcmdWithAnInteger("/RPCSim/event/printModule", this);
 	PrintCmd->SetGuidance("Sets the event printing frequency");
 	PrintCmd->SetParameterName("EventNumber", false);
 	PrintCmd->SetRange("EventNumber>0");
@@ -27,7 +27,5 @@ EventActionMessenger::~EventActionMessenger()
 void EventActionMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
 	if (command == PrintCmd)
-	{
 		eventAction->SetPrintModule(PrintCmd->GetNewIntValue(newValue));
-	}
 }

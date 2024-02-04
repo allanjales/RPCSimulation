@@ -4,7 +4,9 @@
 #include "G4UImessenger.hh"
 #include "globals.hh"
 
-class EventAction; class G4UIdirectory; class G4UIcmdWithAnInteger;
+class EventAction;
+class G4UIdirectory;
+class G4UIcmdWithAnInteger;
 
 class EventActionMessenger: public G4UImessenger
 {
