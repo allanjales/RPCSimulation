@@ -4,10 +4,11 @@
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
 #include "G4StepLimiterPhysics.hh"
+#include "G4StepLimiter.hh"
 
 PhysicsList::PhysicsList()
 {
-	defaultCutValue = 0.01*mm;
+	defaultCutValue = 0.0001*mm;
 	SetVerboseLevel(1);
 
 	RegisterPhysics(new G4StepLimiterPhysics());
@@ -107,12 +108,14 @@ void PhysicsList::ConstructEM()
 			pmanager->AddDiscreteProcess(new G4PhotoElectricEffect);
 			pmanager->AddDiscreteProcess(new G4ComptonScattering);
 			pmanager->AddDiscreteProcess(new G4GammaConversion);
+			pmanager->AddDiscreteProcess(new G4StepLimiter);
 		}
 		else if (particleName == "e-")
 		{
 			pmanager->AddProcess(new G4eMultipleScattering, -1, 1, 1);
 			pmanager->AddProcess(new G4eIonisation,         -1, 2, 2);
 			pmanager->AddProcess(new G4eBremsstrahlung,     -1, 3, 3);
+			pmanager->AddDiscreteProcess(new G4StepLimiter);
 		}
 		else if (particleName == "e+")
 		{
@@ -120,6 +123,7 @@ void PhysicsList::ConstructEM()
 			pmanager->AddProcess(new G4eIonisation,         -1, 2, 2);
 			pmanager->AddProcess(new G4eBremsstrahlung,     -1, 3, 3);
 			pmanager->AddProcess(new G4eplusAnnihilation,    0,-1, 4);
+			pmanager->AddDiscreteProcess(new G4StepLimiter);
 		}
 		else if (particleName == "mu+" || particleName == "mu-")
 		{
@@ -127,11 +131,13 @@ void PhysicsList::ConstructEM()
 			pmanager->AddProcess(new G4MuIonisation,         -1, 2, 2);
 			pmanager->AddProcess(new G4MuBremsstrahlung,     -1, 3, 3);
 			pmanager->AddProcess(new G4MuPairProduction,     -1, 4, 4);
+			pmanager->AddDiscreteProcess(new G4StepLimiter);
 		}
 		else if (particle->GetPDGCharge() != 0)
 		{
 			pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
 			pmanager->AddProcess(new G4hIonisation,         -1, 2, 2);
+			pmanager->AddDiscreteProcess(new G4StepLimiter);
 		}
 	}
 }
@@ -157,6 +163,8 @@ void PhysicsList::ConstructGeneral()
 
 void PhysicsList::SetCuts()
 {
+	// Set the range cuts for secondary production 
+	// low energy limit on particle production
 	if (verboseLevel > 0)
 	{
 		G4cout << "\nPhysicsList::SetCuts:";

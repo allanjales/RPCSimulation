@@ -7,4 +7,3 @@
 /vis/scene/add/trajectories smooth
 /vis/scene/add/eventID
 /vis/scene/endOfEventAction accumulate
-/vis/scene/add/electricField

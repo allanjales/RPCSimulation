@@ -15,7 +15,9 @@
 RunAction::RunAction(DetectorConstruction* det, 
 	PrimaryGeneratorAction* prim, HistoManager* histo)
 : detector(det), primary(prim), histoManager(histo)
-{}
+{
+	G4Random::setTheSeed(time(0));
+}
 
 RunAction::~RunAction()
 {}
@@ -23,7 +25,8 @@ RunAction::~RunAction()
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 {
 	G4cout << "\n--------------\n";
-	G4cout << "Run " << aRun->GetRunID() << " start\n\n";
+	G4cout << "Run " << aRun->GetRunID() << " start\n";
+	G4cout << "Seed: " << G4Random::getTheSeed() << "\n\n";
 
 	std::stringstream strRunID;
 	strRunID << aRun->GetRunID();
@@ -45,5 +48,5 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 
 	histoManager->Save();
 
-	CLHEP::HepRandom::showEngineStatus();
+	G4Random::showEngineStatus();
 }

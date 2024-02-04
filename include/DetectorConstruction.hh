@@ -79,9 +79,8 @@ public:
 	
 	void ConstructSDandField();
 
-	//void SetMagField(G4double);
 	const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
-	const G4VPhysicalVolume* GetGasRPC() {return C2H2F4PhysicalVolume;};
+	const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
 
 private:
 	G4LogicalVolume   *WorldLogicalVolume;
@@ -96,16 +95,13 @@ private:
 	G4LogicalVolume   *PolyethyleneLogicalVolume;
 	G4VPhysicalVolume *PolyethylenePhysicalVolume;
 
-	G4LogicalVolume   *C2H2F4LogicalVolume;
-	G4VPhysicalVolume *C2H2F4PhysicalVolume;
+	G4LogicalVolume   *GasLogicalVolume;
+	G4VPhysicalVolume *GasPhysicalVolume;
 	
 	G4LogicalVolume   *AluminiumLogicalVolume;
 	G4VPhysicalVolume *AluminiumPhysicalVolume;
 
 	DetectorMessenger *fDetectorMessenger;
-
-	//ElectricFieldSetup *fieldSetup;
-	DetectorMessenger  *detectorMessenger;
 
 	void CreateChordFinder(G4FieldManager*, G4ElectricField*);
 };

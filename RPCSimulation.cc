@@ -18,25 +18,23 @@
 
 int main(int argc,char** argv)
 {
-	DetectorConstruction* det;
-	PrimaryGeneratorAction* prim;
-	RunAction* run;
-
-	HistoManager* histo = new HistoManager();
-
 	G4RunManager *runManager = new G4RunManager;
 
-	runManager->SetUserInitialization(det = new DetectorConstruction());
+	DetectorConstruction*   det   = new DetectorConstruction();
+
+	runManager->SetUserInitialization(det);
 	runManager->SetUserInitialization(new PhysicsList());
 	
-	runManager->SetUserAction(prim = new PrimaryGeneratorAction());
-	runManager->SetUserAction(run = new RunAction(det, prim, histo));
+	PrimaryGeneratorAction* prim  = new PrimaryGeneratorAction();
+	HistoManager*           histo = new HistoManager();
+	RunAction*              run   = new RunAction(det, prim, histo);
+	runManager->SetUserAction(prim);
+	runManager->SetUserAction(run);
 	runManager->SetUserAction(new EventAction(run));
 	runManager->SetUserAction(new SteppingAction(det, prim, run, histo));
 
-	G4UIExecutive* ui = 0;
-
 	//If there is no argument, creates a interface
+	G4UIExecutive* ui = NULL;
 	if (argc == 1)
 		ui = new G4UIExecutive(argc, argv);
 
@@ -44,9 +42,9 @@ int main(int argc,char** argv)
 	visManager->Initialize();
 
 	G4UImanager* UImanager = G4UImanager::GetUIpointer();
-	if (argc==1)
-	// Define UI terminal for interactive mode
+	if (argc == 1)
 	{
+		// Define UI terminal for interactive mode
 		UImanager->ApplyCommand("/control/execute vis.mac");
 		ui->SessionStart();
 	}
@@ -54,14 +52,18 @@ int main(int argc,char** argv)
 	{
 		G4String command = "/control/execute ";
 		G4String fileName = argv[1];
-		UImanager->ApplyCommand(command+fileName);
+		UImanager->ApplyCommand(command + fileName);
 	}
 
 	// Job termination
-	if (visManager)
-		delete visManager;
-	delete histo;
 	delete runManager;
+	delete det;
+	delete prim;
+	delete histo;
+	delete run;
+	if (ui) delete ui;
+	if (visManager) delete visManager;
+	delete UImanager;
 
 	return 0;
 }

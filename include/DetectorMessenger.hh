@@ -12,16 +12,14 @@ class G4UIcmdWithoutParameter;
 
 class DetectorMessenger: public G4UImessenger
 {
-  public:
-  
-	 DetectorMessenger(DetectorConstruction* );
+public:
+	DetectorMessenger(DetectorConstruction* );
 	~DetectorMessenger();
-	 
-	 virtual void SetNewValue(G4UIcommand*, G4String);
-	 
-  private:
-  
-	 DetectorConstruction*      fDetector;
+
+	virtual void SetNewValue(G4UIcommand*, G4String);
+
+private:
+	DetectorConstruction*      fDetector;
 };
 
 #endif

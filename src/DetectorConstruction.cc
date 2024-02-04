@@ -1,10 +1,12 @@
 #include "DetectorConstruction.hh"
+#include "G4UserLimits.hh"
+#include "G4RegionStore.hh"
 
 DetectorConstruction::DetectorConstruction()
 : WorldLogicalVolume(), BakeliteLogicalVolume(), GraphiteLogicalVolume(),
-PolyethyleneLogicalVolume(), C2H2F4LogicalVolume(), AluminiumLogicalVolume(),
+PolyethyleneLogicalVolume(), GasLogicalVolume(), AluminiumLogicalVolume(),
 WorldPhysicalVolume(), BakelitePhysicalVolume(), GraphitePhysicalVolume(),
-PolyethylenePhysicalVolume(), C2H2F4PhysicalVolume(), AluminiumPhysicalVolume()
+PolyethylenePhysicalVolume(), GasPhysicalVolume(), AluminiumPhysicalVolume()
 {
 	fDetectorMessenger = new DetectorMessenger(this);
 }
@@ -45,6 +47,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	G4Material* GraphiteMaterial = nist->FindOrBuildMaterial("G4_GRAPHITE");
 	G4Material* PolyethyleneMaterial = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
 
+	// Step Limiter for each material
+	G4UserLimits* userLimits = new G4UserLimits(0.04/100*mm);
+
 	// ----------------
 	// Setup
 	// ----------------
@@ -59,7 +64,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		WorldLogicalVolume->SetVisAttributes(attr);
 	}
 	WorldPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(), WorldLogicalVolume, "WorldPhysicalVolume", 0, false, 0);
-
+	WorldLogicalVolume->SetUserLimits(userLimits);
 
 	// Bakelites
 
@@ -74,6 +79,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"BakelitePhysicalVolume", WorldLogicalVolume, false, 0);
 	BakelitePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 2.*mm), BakeliteLogicalVolume,
 		"BakelitePhysicalVolume", WorldLogicalVolume, false, 1);
+	BakeliteLogicalVolume->SetUserLimits(userLimits);
 
 
 	// Graphite
@@ -89,6 +95,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"GraphitePhysicalVolume", WorldLogicalVolume, false, 0);
 	GraphitePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 3.1*mm), GraphiteLogicalVolume,
 		"GraphitePhysicalVolume", WorldLogicalVolume, false, 1);
+	GraphiteLogicalVolume->SetUserLimits(userLimits);
 
 
 	// Polyethylene
@@ -104,24 +111,21 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"PolyethylenePhysicalVolume", WorldLogicalVolume, false, 0);
 	PolyethylenePhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 3.3*mm), PolyethyleneLogicalVolume,
 		"PolyethylenePhysicalVolume", WorldLogicalVolume, false, 1);
+	PolyethyleneLogicalVolume->SetUserLimits(userLimits);
 
 
 	// C2H2F4
 
-	auto C2H2F4SolidVolume = new G4Box("C2H2F4SolidVolume", 15.0*cm, 15.0*cm, 1.*mm);
-	C2H2F4LogicalVolume = new G4LogicalVolume(C2H2F4SolidVolume, C2H2F4Material, "C2H2F4LogicalVolume", 0, 0, 0);
+	auto GasSolidVolume = new G4Box("GasSolidVolume", 15.0*cm, 15.0*cm, 1.*mm);
+	GasLogicalVolume = new G4LogicalVolume(GasSolidVolume, C2H2F4Material, "GasLogicalVolume", 0, 0, 0);
 	{
 		auto attr = new G4VisAttributes(G4Colour(0.,1.,1.));
 		attr->SetForceWireframe();
-		C2H2F4LogicalVolume->SetVisAttributes(attr);
+		GasLogicalVolume->SetVisAttributes(attr);
 	}
-	C2H2F4PhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), C2H2F4LogicalVolume,
-		"C2H2F4PhysicalVolume", WorldLogicalVolume, false, 0);
-
-	// Creating region
-	G4Region* C2H2F4Region = new G4Region("C2H2F4LogicalVolume");
-	C2H2F4LogicalVolume->SetRegion(C2H2F4Region);
-	C2H2F4Region->AddRootLogicalVolume(C2H2F4LogicalVolume);
+	GasPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), GasLogicalVolume,
+		"GasPhysicalVolume", WorldLogicalVolume, false, 0);
+	GasLogicalVolume->SetUserLimits(userLimits);
 
 
 	// Aluminium Plate
@@ -135,6 +139,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	}
 	AluminiumPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., -3.42*mm), AluminiumLogicalVolume,
 		"AluminiumPhysicalVolume", WorldLogicalVolume, false, 0);
+	AluminiumLogicalVolume->SetUserLimits(userLimits);
+
 
 	return WorldPhysicalVolume;
 }
@@ -153,8 +159,8 @@ void DetectorConstruction::ConstructSDandField()
 	localFieldManager->SetDetectorField(localField);
 	CreateChordFinder(localFieldManager, localField);
 
-	C2H2F4LogicalVolume->SetFieldManager(localFieldManager, true);
-	C2H2F4LogicalVolume->SetFieldManager(localFieldManager, true);
+	// Set which parts will have eletric field
+	GasLogicalVolume->SetFieldManager(localFieldManager, true);
 }
 
 void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4ElectricField* field)
@@ -164,8 +170,8 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 	auto fStepper = new G4ClassicalRK4(globalFieldEq, 8);
 	G4cout << "G4ClassicalRK4 (default) is called" << G4endl;
 
-	float fMinStep  = 0.01*mm;
-	G4cout << "The minimal step is equal to " << G4BestUnit(fMinStep, "Length") << G4endl;
+	float fMinStep  = 0.02/1000*mm;
+	G4cout << "The minimal step is in integral is equal to " << G4BestUnit(fMinStep, "Length") << G4endl;
 	auto fIntgrDriver = new G4MagInt_Driver(fMinStep, fStepper, fStepper->GetNumberOfVariables());
 	auto fChordFinder = new G4ChordFinder(fIntgrDriver);
 	fieldManager->SetChordFinder(fChordFinder);

@@ -8,11 +8,11 @@
 EventActionMessenger::EventActionMessenger(EventAction* EventAction)
 : eventAction(EventAction)
 {
-	eventDir = new G4UIdirectory("/testem/event/");
+	eventDir = new G4UIdirectory("/RPCSim/event/");
 	eventDir ->SetGuidance("event control");
 
-	PrintCmd = new G4UIcmdWithAnInteger("/testem/event/printModule",this);
-	PrintCmd->SetGuidance("Print events module n");
+	PrintCmd = new G4UIcmdWithAnInteger("/RPCSim/event/printModule",this);
+	PrintCmd->SetGuidance("Sets the event printing frequency");
 	PrintCmd->SetParameterName("EventNumber", false);
 	PrintCmd->SetRange("EventNumber>0");
 	PrintCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
