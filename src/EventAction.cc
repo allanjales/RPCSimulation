@@ -12,7 +12,7 @@
 #include "RunAction.hh"
 
 EventAction::EventAction(RunAction* ra)
-: printModule(10000), eventMessenger(0), runAction(ra)
+: printModule(1000), eventMessenger(0), runAction(ra)
 {
 	eventMessenger = new EventActionMessenger(this);
 }

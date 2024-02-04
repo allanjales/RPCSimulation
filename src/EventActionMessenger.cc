@@ -27,5 +27,9 @@ EventActionMessenger::~EventActionMessenger()
 void EventActionMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
 	if (command == PrintCmd)
-		eventAction->SetPrintModule(PrintCmd->GetNewIntValue(newValue));
+	{
+		G4int printModule = PrintCmd->GetNewIntValue(newValue);
+		eventAction->SetPrintModule(printModule);
+		G4cout << "Print module set to " << printModule << G4endl;
+	}
 }

@@ -27,6 +27,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 		StoreParticleData(aStep, 0);
 	}
 
+	/*
 	if      (ParticlePassesZPlane(prePoint, endPoint, -3.4 *mm)) StoreParticleData(aStep, 1);
 	else if (ParticlePassesZPlane(prePoint, endPoint, -3.2 *mm)) StoreParticleData(aStep, 2);
 	else if (ParticlePassesZPlane(prePoint, endPoint, -3.0 *mm)) StoreParticleData(aStep, 3);
@@ -36,6 +37,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	else if (ParticlePassesZPlane(prePoint, endPoint,  3.2 *mm)) StoreParticleData(aStep, 7);
 	else if (ParticlePassesZPlane(prePoint, endPoint,  3.4 *mm)) StoreParticleData(aStep, 8);
 	else if (ParticlePassesZPlane(prePoint, endPoint,  3.44*mm)) StoreParticleData(aStep, 9);
+	*/
 }
 
 bool SteppingAction::ParticlePassesZPlane(G4Track* track, G4double zPlane)
@@ -51,9 +53,8 @@ bool SteppingAction::ParticlePassesZPlane(G4StepPoint* prePoint, G4StepPoint* en
 	G4double preZ = prePoint->GetPosition().z();
 	G4double endZ = endPoint->GetPosition().z();
 
-	if (preZ < zPlane && endZ > zPlane)
-		return true;
-	return false;
+	//return (preZ < zPlane && endZ > zPlane) || (preZ > zPlane && endZ < zPlane);
+	return (preZ - zPlane) * (endZ - zPlane) < 0;
 }
 
 void SteppingAction::StoreParticleData(const G4Step* aStep, G4int regionID)
