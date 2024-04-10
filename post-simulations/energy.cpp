@@ -6,14 +6,14 @@ void energy()
 	TFile* file0    = TFile::Open("../build/results/output_0.root");
 	TTree* DataTree = (TTree*)file0->Get(("DetectedParticles"));
 	
-	RooRealVar ParticleID               ("fParticleID",               "ParticleID", 0, RooNumber::infinity());
-	RooRealVar RegionID                 ("fRegionID",                 "RegionID", 0, RooNumber::infinity());
-	RooRealVar PositionX                ("fPositionX",                "PositionX", -RooNumber::infinity(), RooNumber::infinity());
-	RooRealVar PositionY                ("fPositionY",                "PositionY", -RooNumber::infinity(), RooNumber::infinity());
-	RooRealVar PositionZ                ("fPositionZ",                "PositionZ", -RooNumber::infinity(), RooNumber::infinity());
-	RooRealVar KinectEnergy             ("fKinectEnergy",             "KinectEnergy", 0, RooNumber::infinity());
-	RooRealVar CosTheta                 ("fCosTheta",                 "CosTheta", -1., 1.);
-	RooRealVar Phi                      ("fPhi",                      "Phi", -TMath::Pi(), TMath::Pi());
+	RooRealVar ParticleID  ("fParticleID",   "ParticleID"   , -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar RegionID    ("fRegionID",     "RegionID"     , 0,                      RooNumber::infinity());
+	RooRealVar PositionX   ("fPositionX",    "PositionX"    , -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar PositionY   ("fPositionY",    "PositionY"    , -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar PositionZ   ("fPositionZ",    "PositionZ"    , -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar KinectEnergy("fKinectEnergy", "KinectEnergy" , 0,                      RooNumber::infinity());
+	RooRealVar CosTheta    ("fCosTheta",     "CosTheta"     , -1.,                    1.);
+	RooRealVar Phi         ("fPhi",          "Phi"          , -TMath::Pi(),           TMath::Pi());
 	RooDataSet DataGamma("data", "data", DataTree,
 	RooArgSet(ParticleID, RegionID, PositionX, PositionY, PositionY, KinectEnergy, CosTheta, Phi), "fParticleID==11 && fRegionID==0");
 
@@ -38,10 +38,10 @@ void energy()
 	//
 	{
 		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = KinectEnergy.frame(0., .1);
+		RooPlot* frame = KinectEnergy.frame(0., 1);
 		frame->SetTitle((string("Electrons")+sufix).c_str());
 		DataGamma.plotOn(frame, DrawOption("BE"), FillColor(color));
-		frame->SetMaximum(40000);
+		//frame->SetMaximum(40000);
 		frame->GetXaxis()->SetTitle("Energy (MeV)");
 		frame->GetYaxis()->SetTitle("Events / ( 0.05 )");
 		frame->Draw();
@@ -58,12 +58,12 @@ void energy()
 	//
 	{
 		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = KinectEnergy.frame(0., 0.1);
+		RooPlot* frame = KinectEnergy.frame(0., 1.);
 		frame->SetTitle((string("Electrons")+sufix).c_str());
 		DataGamma.plotOn(frame, DrawOption("BX"), FillColor(color));
 		//frame->GetXaxis()->SetRangeUser(0, 0.1);
 		frame->SetMinimum(1);
-		frame->SetMaximum(1e5);
+		//frame->SetMaximum(1e5);
 		frame->GetXaxis()->SetTitle("Energy (MeV)");
 		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
 		frame->Draw("B");
@@ -81,12 +81,12 @@ void energy()
 	//
 	{
 		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = KinectEnergy.frame(0., 1.);
+		RooPlot* frame = KinectEnergy.frame(0., 40.);
 		frame->SetTitle((string("Electrons")+sufix).c_str());
 		DataGamma.plotOn(frame, DrawOption("BX"), FillColor(color));
 		//frame->GetXaxis()->SetRangeUser(0, 0.1);
 		frame->SetMinimum(1);
-		frame->SetMaximum(1e5);
+		//frame->SetMaximum(1e5);
 		frame->GetXaxis()->SetTitle("Energy (MeV)");
 		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
 		frame->Draw("B");
@@ -125,12 +125,12 @@ void energy()
 
 	// Cos
 	{
-		TCanvas* c1  = new TCanvas;
+		TCanvas* c1  = new TCanvas();
 		RooPlot* frame = CosTheta.frame(-1, 1);
 		frame->SetTitle((string("Electrons Cos(#theta)")+sufix).c_str());
 		DataGamma.plotOn(frame, DrawOption("BX"), FillColor(color));
 		frame->SetMinimum(1);
-		frame->SetMaximum(35000);
+		//frame->SetMaximum(35000);
 		frame->GetXaxis()->SetTitle("Cos(#theta)");
 		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
 		frame->Draw("B");
@@ -149,7 +149,7 @@ void energy()
 		frame->SetTitle((string("Electrons #phi")+sufix).c_str());
 		DataGamma.plotOn(frame, DrawOption("BX"), FillColor(color));
 		frame->SetMinimum(1);
-		frame->SetMaximum(2500);
+		//frame->SetMaximum(2500);
 		frame->GetXaxis()->SetTitle("#phi (rad)");
 		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
 		frame->Draw("B");

@@ -12,11 +12,14 @@
 #include "Randomize.hh"
 #include <iomanip>
 
+#include "G4UnitsTable.hh"
+
 RunAction::RunAction(DetectorConstruction* det, 
 	PrimaryGeneratorAction* prim, HistoManager* histo)
 : detector(det), primary(prim), histoManager(histo)
 {
-	G4Random::setTheSeed(time(0));
+	//G4Random::setTheSeed(time(0));
+	G4RunManager::GetRunManager()->SetRandomNumberStore(false);
 }
 
 RunAction::~RunAction()
@@ -31,6 +34,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	std::stringstream strRunID;
 	strRunID << aRun->GetRunID();
 	histoManager->Book("output_" + strRunID.str());
+	runStartedTime = time(0);
 }
 
 void RunAction::EndOfRunAction(const G4Run* aRun)
@@ -41,10 +45,13 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	G4cout << "\nThe run consists of " << aRun->GetNumberOfEvent() << " "
 		<< particle->GetParticleName() << " of " << G4BestUnit(energy,"Energy") << " through\n";
 	
-	G4cout << "\nRun " << aRun->GetRunID() << " end" << G4endl;
-	G4cout << "--------------" << G4endl;
+	double elapsedtime = (time(0) - runStartedTime) * s;
+	G4cout << "\nRun " << aRun->GetRunID() << " ended within " << G4BestUnit(elapsedtime, "Time") << "\n";
+	G4cout << "--------------\n";
 
-	if (aRun->GetNumberOfEvent() == 0) return;
+	//if has not been any event, do not save histograms
+	if (aRun->GetNumberOfEvent() == 0)
+		return;
 
 	histoManager->Save();
 

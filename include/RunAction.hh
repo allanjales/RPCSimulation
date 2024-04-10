@@ -14,14 +14,16 @@ class RunAction : public G4UserRunAction
 	public:
 		RunAction(DetectorConstruction*, PrimaryGeneratorAction*, HistoManager*);
 		virtual ~RunAction();
-	
-	public:
+		
 		void BeginOfRunAction(const G4Run*);
 		void EndOfRunAction(const G4Run*);
+		
 	private:
 		DetectorConstruction* detector;
 		PrimaryGeneratorAction* primary;
 		HistoManager* histoManager;
+
+		int runStartedTime;
 	};
 
 #endif

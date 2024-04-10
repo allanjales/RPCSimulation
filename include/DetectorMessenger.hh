@@ -22,7 +22,13 @@ private:
 	DetectorConstruction*      fDetector;
 
 	G4UIdirectory*             eventDir;
-	G4UIcmdWithADoubleAndUnit* PrintCmd;
+
+	G4UIcmdWithADoubleAndUnit* worldMaxStepLengthcmd;
+	G4UIcmdWithADoubleAndUnit* polyethyleneMaxStepLengthcmd;
+	G4UIcmdWithADoubleAndUnit* graphiteMaxStepLengthcmd;
+	G4UIcmdWithADoubleAndUnit* bakeliteMaxStepLengthcmd;
+	G4UIcmdWithADoubleAndUnit* gasMaxStepLengthcmd;
+	G4UIcmdWithADoubleAndUnit* aluminiumMaxStepLengthcmd;
 };
 
 #endif

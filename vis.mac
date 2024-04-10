@@ -7,3 +7,10 @@
 /vis/scene/add/trajectories smooth
 /vis/scene/add/eventID
 /vis/scene/endOfEventAction accumulate
+
+/RPCSim/maxStepLength/world        0.02 mm
+/RPCSim/maxStepLength/bakelite     0.02 mm
+/RPCSim/maxStepLength/graphite     0.02 mm
+/RPCSim/maxStepLength/polyethylene 0.02 mm
+/RPCSim/maxStepLength/gas          0.02 mm
+/RPCSim/maxStepLength/aluminium    0.02 mm

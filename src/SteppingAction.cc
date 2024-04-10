@@ -27,7 +27,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 		StoreParticleData(aStep, 0);
 	}
 
-	/*
 	if      (ParticlePassesZPlane(prePoint, endPoint, -3.4 *mm)) StoreParticleData(aStep, 1);
 	else if (ParticlePassesZPlane(prePoint, endPoint, -3.2 *mm)) StoreParticleData(aStep, 2);
 	else if (ParticlePassesZPlane(prePoint, endPoint, -3.0 *mm)) StoreParticleData(aStep, 3);
@@ -37,7 +36,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	else if (ParticlePassesZPlane(prePoint, endPoint,  3.2 *mm)) StoreParticleData(aStep, 7);
 	else if (ParticlePassesZPlane(prePoint, endPoint,  3.4 *mm)) StoreParticleData(aStep, 8);
 	else if (ParticlePassesZPlane(prePoint, endPoint,  3.44*mm)) StoreParticleData(aStep, 9);
-	*/
 }
 
 bool SteppingAction::ParticlePassesZPlane(G4Track* track, G4double zPlane)
@@ -74,7 +72,8 @@ void SteppingAction::StoreParticleData(const G4Step* aStep, G4int regionID)
 
 	G4ThreeVector beamDirectionVec = primary->GetParticleGun()->GetParticleMomentumDirection();
 	G4ThreeVector directionVec     = endPoint->GetMomentumDirection();
-	G4double costheta = directionVec * beamDirectionVec;
+	//G4double costheta = directionVec * beamDirectionVec;
+	G4double costheta = directionVec * G4ThreeVector(0., 0., 1.);
 
 	G4double xDirection = directionVec * G4PolarizationHelper::GetParticleFrameX(beamDirectionVec);
 	G4double yDirection = directionVec * G4PolarizationHelper::GetParticleFrameY(beamDirectionVec);

@@ -82,7 +82,12 @@ public:
 	const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
 	const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
 
-	G4UserLimits*      UserLimits;
+	G4UserLimits*      WorldUserLimits;
+	G4UserLimits*      BakeliteUserLimits;
+	G4UserLimits*      GraphiteUserLimits;
+	G4UserLimits*      PolyethyleneUserLimits;
+	G4UserLimits*      GasUserLimits;
+	G4UserLimits*      AluminiumUserLimits;
 
 private:
 	G4LogicalVolume*   WorldLogicalVolume;

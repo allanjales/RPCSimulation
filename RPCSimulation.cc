@@ -20,7 +20,7 @@ int main(int argc,char** argv)
 {
 	G4RunManager *runManager = new G4RunManager;
 
-	DetectorConstruction*   det   = new DetectorConstruction();
+	DetectorConstruction* det = new DetectorConstruction();
 
 	runManager->SetUserInitialization(det);
 	runManager->SetUserInitialization(new PhysicsList());
@@ -35,11 +35,13 @@ int main(int argc,char** argv)
 
 	//If there is no argument, creates a interface
 	G4UIExecutive* ui = NULL;
+	G4VisManager *visManager = NULL;
 	if (argc == 1)
-		ui = new G4UIExecutive(argc, argv);
-
-	G4VisManager *visManager = new G4VisExecutive();
-	visManager->Initialize();
+	{
+		ui         = new G4UIExecutive(argc, argv);
+		visManager = new G4VisExecutive();
+		visManager->Initialize();
+	}
 
 	G4UImanager* UImanager = G4UImanager::GetUIpointer();
 	if (argc == 1)
@@ -57,13 +59,8 @@ int main(int argc,char** argv)
 
 	// Job termination
 	delete runManager;
-	delete det;
-	delete prim;
-	delete histo;
-	delete run;
 	if (ui) delete ui;
 	if (visManager) delete visManager;
-	delete UImanager;
 
 	return 0;
 }
