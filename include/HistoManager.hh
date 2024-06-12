@@ -5,6 +5,9 @@
 #include "G4AnalysisManager.hh"
 #include "G4ParticleDefinition.hh"
 
+#include <G4StepPoint.hh>
+#include <G4Track.hh>
+
 class HistoManager
 {
 public:
@@ -13,7 +16,7 @@ public:
 
 	void Book(G4String fileName);
 	void Save();
-	void FillData(G4ParticleDefinition*, G4int, G4int, G4ThreeVector, G4double, G4double, G4double, G4double);
+	void FillData(const G4Step* aStep, G4int regionID);
 private:
 	G4AnalysisManager *AnalysisManager;
 };

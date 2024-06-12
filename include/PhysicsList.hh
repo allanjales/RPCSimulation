@@ -11,17 +11,7 @@ public:
 	~PhysicsList();
 
 protected:
-	void ConstructParticle();
-	void ConstructProcess();
 	void SetCuts();
-
-	void ConstructBosons();
-	void ConstructLeptons();
-	void ConstructMesons();
-	void ConstructBaryons();
-
-	void ConstructGeneral();
-	void ConstructEM();
 };
 
 #endif

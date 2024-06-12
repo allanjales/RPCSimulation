@@ -27,15 +27,17 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 		StoreParticleData(aStep, 0);
 	}
 
-	if      (ParticlePassesZPlane(prePoint, endPoint, -3.4 *mm)) StoreParticleData(aStep, 1);
-	else if (ParticlePassesZPlane(prePoint, endPoint, -3.2 *mm)) StoreParticleData(aStep, 2);
-	else if (ParticlePassesZPlane(prePoint, endPoint, -3.0 *mm)) StoreParticleData(aStep, 3);
-	else if (ParticlePassesZPlane(prePoint, endPoint, -1.0 *mm)) StoreParticleData(aStep, 4);
-	else if (ParticlePassesZPlane(prePoint, endPoint,  1.0 *mm)) StoreParticleData(aStep, 5);
-	else if (ParticlePassesZPlane(prePoint, endPoint,  3.0 *mm)) StoreParticleData(aStep, 6);
-	else if (ParticlePassesZPlane(prePoint, endPoint,  3.2 *mm)) StoreParticleData(aStep, 7);
-	else if (ParticlePassesZPlane(prePoint, endPoint,  3.4 *mm)) StoreParticleData(aStep, 8);
-	else if (ParticlePassesZPlane(prePoint, endPoint,  3.44*mm)) StoreParticleData(aStep, 9);
+	/*
+	if (ParticlePassesZPlane(prePoint, endPoint, -3.4 )) StoreParticleData(aStep, 1);
+	if (ParticlePassesZPlane(prePoint, endPoint, -3.2 )) StoreParticleData(aStep, 2);
+	if (ParticlePassesZPlane(prePoint, endPoint, -3.0 )) StoreParticleData(aStep, 3);
+	if (ParticlePassesZPlane(prePoint, endPoint, -1.0 )) StoreParticleData(aStep, 4);
+	if (ParticlePassesZPlane(prePoint, endPoint,  1.0 )) StoreParticleData(aStep, 5);
+	if (ParticlePassesZPlane(prePoint, endPoint,  3.0 )) StoreParticleData(aStep, 6);
+	if (ParticlePassesZPlane(prePoint, endPoint,  3.2 )) StoreParticleData(aStep, 7);
+	if (ParticlePassesZPlane(prePoint, endPoint,  3.4 )) StoreParticleData(aStep, 8);
+	if (ParticlePassesZPlane(prePoint, endPoint,  3.44)) StoreParticleData(aStep, 9);
+	*/
 }
 
 bool SteppingAction::ParticlePassesZPlane(G4Track* track, G4double zPlane)
@@ -57,29 +59,5 @@ bool SteppingAction::ParticlePassesZPlane(G4StepPoint* prePoint, G4StepPoint* en
 
 void SteppingAction::StoreParticleData(const G4Step* aStep, G4int regionID)
 {
-	G4StepPoint* prePoint = aStep->GetPreStepPoint();
-	G4StepPoint* endPoint = aStep->GetPostStepPoint();
-
-	G4Track* aTrack = aStep->GetTrack();
-	G4ParticleDefinition* particle = aTrack->GetDynamicParticle()->GetDefinition();
-
-	G4int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-
-	G4ThreeVector prePosition = prePoint->GetPosition();
-	G4ThreeVector endPosition = endPoint->GetPosition();
-
-	G4double kinEnergy = endPoint->GetKineticEnergy();
-
-	G4ThreeVector beamDirectionVec = primary->GetParticleGun()->GetParticleMomentumDirection();
-	G4ThreeVector directionVec     = endPoint->GetMomentumDirection();
-	//G4double costheta = directionVec * beamDirectionVec;
-	G4double costheta = directionVec * G4ThreeVector(0., 0., 1.);
-
-	G4double xDirection = directionVec * G4PolarizationHelper::GetParticleFrameX(beamDirectionVec);
-	G4double yDirection = directionVec * G4PolarizationHelper::GetParticleFrameY(beamDirectionVec);
-	G4double phi = std::atan2(yDirection, xDirection);
-
-	G4double stepLength = aStep->GetStepLength();
-
-	histoManager->FillData(particle, eventID, regionID, endPosition, stepLength, kinEnergy, costheta, phi);
+	histoManager->FillData(aStep, regionID);
 }
