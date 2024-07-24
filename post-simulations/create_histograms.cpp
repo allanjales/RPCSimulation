@@ -1,290 +1,163 @@
-//#include <string>
-using namespace RooFit;
+#include "TFile.h"
+#include "TTree.h"
+#include "RooDataSet.h"
+#include "RooRealVar.h"
+#include "TMath.h"
+#include "RooPlot.h"
+#include "RooHist.h"
+
+#include "TCanvas.h"
+#include "TH2.h"
+
+#include <iostream>
+using namespace std;
+
+void create_histogram(const RooDataSet& data, TFile* outFile, const char* histSaveName,
+RooRealVar& variable, double minVar, double maxVar, int nBins = 100)
+{
+	// Create histogram for the variable and plot data on it
+	RooPlot* frame = variable.frame(minVar, maxVar, nBins);
+	data.plotOn(frame);
+
+	// Save histogram
+	outFile->cd();
+	frame->getHist()->Write(histSaveName);
+	delete frame;
+}
+
+void create_histogram(const RooDataSet& data, TFile* outFile, const char* histSaveName,
+RooRealVar& variable, bool sameVarBounds = false, int nBins = 100)
+{
+	// Get min and max values of the variable
+	double minVar;
+	double maxVar;
+	if (sameVarBounds)
+	{
+		minVar = variable.getMin();
+		maxVar = variable.getMax();
+	}
+	else
+	{
+		data.getRange(variable, minVar, maxVar);
+	}
+
+	cout << "TH1 for " << variable.GetName() << (sameVarBounds ? " using same var bounds" : " getting min-max") << "\n";
+	cout << "> Min: " << minVar << "\n";
+	cout << "> Max: " << maxVar << "\n\n";
+
+	create_histogram(data, outFile, histSaveName, variable, minVar, maxVar, nBins);
+}
+
+void create_histogram_2d(const RooDataSet& data, TFile* outFile, const char* histSaveName,
+RooRealVar& xVariable, double xMin, double xMax, int xNBins,
+RooRealVar& yVariable, double yMin, double yMax, int yNBins)
+{
+	// Create histogram for the variable and plot data on it
+	TH2* hist2d = dynamic_cast<TH2*>(data.createHistogram("hist2d",
+	xVariable, RooFit::Binning(xNBins, xMin, xMax), RooFit::YVar(
+	yVariable, RooFit::Binning(yNBins, yMin, yMax))));
+
+	// Save histogram
+	outFile->cd();
+	hist2d->Write(histSaveName);
+	delete hist2d;
+}
+
+void create_histogram_2d(const RooDataSet& data, TFile* outFile, const char* histSaveName,
+RooRealVar& xVariable, int xNBins,
+RooRealVar& yVariable, int yNBins,  bool sameVarBounds = false)
+{
+	// Get min and max values of the variable
+	double xMin;
+	double xMax;
+	double yMin;
+	double yMax;
+	if (sameVarBounds)
+	{
+		xMin = xVariable.getMin();
+		xMax = xVariable.getMax();
+		yMin = yVariable.getMin();
+		yMax = yVariable.getMax();
+	}
+	else
+	{
+		data.getRange(xVariable, xMin, xMax);
+		data.getRange(yVariable, yMin, yMax);
+	}
+
+	cout << "TH2 for " << yVariable.GetName() << " x " << xVariable.GetName() << (sameVarBounds ? " using same var bounds" : " getting min-max") << "\n";
+	cout << "> Min " << xVariable.GetName() << ": " << xMin << "\n";
+	cout << "> Max " << xVariable.GetName() << ": " << xMax << "\n";
+	cout << "> Min " << yVariable.GetName() << ": " << yMin << "\n";
+	cout << "> Max " << yVariable.GetName() << ": " << yMax << "\n\n";
+
+	create_histogram_2d(data, outFile, histSaveName, xVariable, xMin, xMax, xNBins, yVariable, yMin, yMax, yNBins);
+}
+
 
 void create_histograms()
 {
-	TFile* file0    = TFile::Open("../build/results/output_0.root");
-	//TFile* file0    = TFile::Open("../build/results/output_0_amostra.root");
+	string filePath = "../build/results/output_0.root";
+	// ParticleID 11 -> Electron; RegionID 0 -> Gas volume
+	string cutString = "ParticleID==11 && RegionID==0";
+
+	// ----------------------------
+	// Open file and get tree
+	// ----------------------------
+
+	TFile* file0    = TFile::Open(filePath.c_str());
 	TTree* DataTree = (TTree*)file0->Get(("DetectedParticles"));
 	
 	RooRealVar ParticleID  ("ParticleID",     "ParticleID"    , -RooNumber::infinity(), RooNumber::infinity());
 	RooRealVar RegionID    ("RegionID",       "RegionID"      , 0,                      RooNumber::infinity());
+	
 	RooRealVar PositionX   ("PositionX",      "PositionX"     , -RooNumber::infinity(), RooNumber::infinity());
 	RooRealVar PositionY   ("PositionY",      "PositionY"     , -RooNumber::infinity(), RooNumber::infinity());
 	RooRealVar PositionZ   ("PositionZ",      "PositionZ"     , -RooNumber::infinity(), RooNumber::infinity());
+	
 	RooRealVar KinectEnergy("KinectEnergy",   "KinectEnergy"  , 0,                      RooNumber::infinity());
-	RooRealVar Theta       ("Theta",          "Theta"         , 0,           TMath::Pi());
+	RooRealVar TotalEnergy ("TotalEnergy",    "TotalEnergy"   , 0,                      RooNumber::infinity());
+	RooRealVar Theta       ("Theta",          "Theta"         , 0,                      TMath::Pi());
 	RooRealVar Phi         ("Phi",            "Phi"           , -TMath::Pi(),           TMath::Pi());
-	RooRealVar CosTheta    ("CosTheta",       "CosTheta"      , -1.,                    1.);
-	RooRealVar OldCosTheta ("OldCosTheta",    "OldCosTheta"   , -1.,                    1.);
-	RooRealVar Pseudorapidity    ("Pseudorapidity", "Pseudorapidity", -RooNumber::infinity(),          RooNumber::infinity());
-	RooRealVar MomentumMagnitude    ("MomentumMagnitude", "MomentumMagnitude", 0,                      RooNumber::infinity());
-	RooArgSet  vars(ParticleID, RegionID, PositionX, PositionY, PositionZ, KinectEnergy,
-	Theta, Phi, CosTheta, OldCosTheta, Pseudorapidity, MomentumMagnitude);
+	RooRealVar MomentumMagnitude("MomentumMagnitude", "MomentumMagnitude", 0,           RooNumber::infinity());
 	
-	RooDataSet DataCut("data", "data", DataTree, vars, "ParticleID==11 && RegionID==0");
-	int total = DataCut.sumEntries();
-
-	TFile* outFile = new TFile("histograms.root", "RECREATE");
+	RooRealVar Pt             ("Pt",             "Pt"            , 0,                      RooNumber::infinity());
+	RooRealVar Pseudorapidity ("Pseudorapidity", "Pseudorapidity", -RooNumber::infinity(), RooNumber::infinity());
+	RooRealVar CosTheta       ("CosTheta",       "CosTheta"      , -1.,                    1.);
 	
-	// ----------------------------
-	// SETTINGS
-	// ----------------------------
-
-	int color = 9;	//9 -> blue
-	string sufix = " (1 million mu+ w/ 1 GeV)";
-
-	
+	// Open tree file
+	RooArgSet vars(ParticleID, RegionID, PositionX, PositionY, PositionZ, KinectEnergy, TotalEnergy,
+	Theta, Phi, MomentumMagnitude, Pt, Pseudorapidity, CosTheta);
+	RooDataSet* DataCut = new RooDataSet("data", "data", DataTree, vars, cutString.c_str());
+	int total = DataCut->sumEntries();
 	cout << "Total    tree entries: " << DataTree->GetEntries() << "\n";
 	cout << "Filtered tree entries: " << total  << "\n";
 
-	// General Latex
-	TLatex* text = new TLatex();
-	text->SetTextSize(0.04);
-	text->SetTextAlign(12);
-	text->SetNDC(kTRUE);
+	// Create output file
+	TFile* outFile = new TFile("histograms.root", "RECREATE");
 
-	// ----------------
-	// Energy Plot
-	// ----------------
-	{
-		//Create histogram
-		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = KinectEnergy.frame(0., 100.);
-		frame->SetTitle((string("Electrons")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		frame->GetXaxis()->SetTitle("Energy (MeV)");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
+	create_histogram(*DataCut, outFile, "Energy",            KinectEnergy);
+	create_histogram(*DataCut, outFile, "Theta",             Theta, true);
+	create_histogram(*DataCut, outFile, "Phi",               Phi,   true);
+	create_histogram(*DataCut, outFile, "CosTheta",          CosTheta, true);
+	create_histogram(*DataCut, outFile, "Eta",               Pseudorapidity);
+	create_histogram(*DataCut, outFile, "MomentumMagnitude", MomentumMagnitude);
+	create_histogram(*DataCut, outFile, "Pt",                Pt);
+	create_histogram_2d(*DataCut, outFile, "XY", PositionX, -2, 2, 50, PositionY, -2, 2, 50);
+	create_histogram_2d(*DataCut, outFile, "ZY", PositionZ, -1, 1, 50, PositionY, -4, 4, 50);
+	create_histogram_2d(*DataCut, outFile, "ThetaPhi", Theta, 50, Phi, 50, true);
+	create_histogram_2d(*DataCut, outFile, "PtP", Pt, 50, MomentumMagnitude, 50);
+	delete DataCut;
 
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("ElectronEnergyDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= KinectEnergy && KinectEnergy <=" 
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.6, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.6, 0.80, Form("Out of range = %d", total - inRange));
-		c1->SetLogy();
-	}
-
-	// ---------------------
-	// Cos Theta
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas();
-		RooPlot* frame = CosTheta.frame(-1, 1, 100);
-		//RooPlot* frame = CosTheta.frame(-0.04, -0.01, 1000);
-		frame->SetTitle((string("Electrons Cos(#theta)")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		//frame->SetMaximum(35000);
-		frame->GetXaxis()->SetTitle("Cos(#theta)");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
-
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("ElectronCosThetaDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= CosTheta && CosTheta <="
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.65, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.65, 0.80, Form("Out of range = %d", total - inRange));
-	}
-
-	// ---------------------
-	// OLD Cos Theta
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas();
-		RooPlot* frame = OldCosTheta.frame(-1, 1, 100);
-		//RooPlot* frame = OldCosTheta.frame(-0.04, -0.01, 1000);
-		frame->SetTitle((string("Old Electrons Cos(#theta)")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		//frame->SetMaximum(35000);
-		frame->GetXaxis()->SetTitle("Cos(#theta)");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
-
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("OldElectronCosThetaDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= OldCosTheta && OldCosTheta <="
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.65, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.65, 0.80, Form("Out of range = %d", total - inRange));
-	}
-
-	// ---------------------
-	// Theta
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = Theta.frame(0, TMath::Pi());
-		frame->SetTitle((string("Electrons #theta")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		frame->GetXaxis()->SetTitle("#theta (rad)");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
-
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("ElectronThetaDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= Theta && Theta <=" 
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.65, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.65, 0.80, Form("Out of range = %d", total - inRange));
-	}
-
-	// ---------------------
-	// Phi
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = Phi.frame(-TMath::Pi(), TMath::Pi());
-		frame->SetTitle((string("Electrons #phi")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		frame->GetXaxis()->SetTitle("#phi (rad)");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
-
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("ElectronPhiDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= Phi && Phi <=" 
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.65, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.65, 0.80, Form("Out of range = %d", total - inRange));
-	}
-
-	// ---------------------
-	// Pseudorapidity
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = Pseudorapidity.frame(-8, 8);
-		frame->SetTitle((string("Electrons #eta")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		frame->GetXaxis()->SetTitle("#eta");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
-
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("ElectronEtaDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= Pseudorapidity && Pseudorapidity <=" 
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.65, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.65, 0.80, Form("Out of range = %d", total - inRange));
-	}
-
-	// ---------------------
-	// Momentum Magnitude
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas;
-		RooPlot* frame = MomentumMagnitude.frame(0, 100.);
-		frame->SetTitle((string("Electrons p")+sufix).c_str());
-		DataCut.plotOn(frame, DrawOption("BX"), FillColor(color));
-		frame->SetMinimum(1);
-		frame->GetXaxis()->SetTitle("p (MeV/c)");
-		frame->GetYaxis()->SetTitle("Events ( 0.05 )");
-		frame->Draw("B");
-
-		// Save histogram
-		outFile->cd();
-		frame->getHist()->Write("ElectronMomentumDistribution");
-
-		int inRange = DataCut.sumEntries(
-			(to_string(frame->GetXaxis()->GetXmin()) + "<= MomentumMagnitude && MomentumMagnitude <=" 
-			+ to_string(frame->GetXaxis()->GetXmax())).c_str());
-		text->DrawLatex(0.65, 0.85, Form("Entries = %d", inRange));
-		text->DrawLatex(0.65, 0.80, Form("Out of range = %d", total - inRange));
-	}
-
-	// ---------------------
-	// 2D Hist
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas;
-		TH2* hist2d;
-		hist2d = dynamic_cast<TH2*>(DataCut.createHistogram("hist", PositionX, RooFit::Binning(50, -2, 2), RooFit::YVar(PositionY, RooFit::Binning(50, -2, 2))));
-		hist2d->SetTitle((string("Electrons")+sufix).c_str());
-		hist2d->Draw("colz") ;
-		hist2d->GetXaxis()->SetTitle("X (mm)");
-		hist2d->GetYaxis()->SetTitle("Y (mm)");
-
-		// Save histogram
-		outFile->cd();
-		hist2d->Write("Electron2DDistribution");
-		
-		gStyle->SetOptStat(0);
-		/*
-		//Box with infos
-		TBox *b = new TBox(0.5, 0.5, 0.85, 0.8);
-		b->SetFillColor(kRed);
-		b->SetLineColor(kBlack);
-		b->SetLineWidth(8.);
-		b->Draw();
-		*/
-
-		text->DrawLatex(0.65, 0.86, Form("Entries = %f", DataCut.sumEntries()));
-	}
-
-	// ---------------------
-	// 2D Hist side
-	// ---------------------
-	{
-		// Create histogram
-		TCanvas* c1  = new TCanvas;
-		TH2* hist2d;
-		hist2d = dynamic_cast<TH2*>(DataCut.createHistogram("hist", PositionZ, RooFit::Binning(50, -1, 1), RooFit::YVar(PositionY, RooFit::Binning(50, -4, 4))));
-		hist2d->SetTitle((string("Electrons")+sufix).c_str());
-		hist2d->Draw("colz") ;
-		hist2d->GetXaxis()->SetTitle("Z (mm)");
-		hist2d->GetYaxis()->SetTitle("Y (mm)");
-
-		// Save histogram
-		outFile->cd();
-		hist2d->Write("Electron2DSideDistribution");
-		
-		gStyle->SetOptStat(0);
-		/*
-		//Box with infos
-		TBox *b = new TBox(0.5, 0.5, 0.85, 0.8);
-		b->SetFillColor(kRed);
-		b->SetLineColor(kBlack);
-		b->SetLineWidth(8.);
-		b->Draw();
-		*/
-
-		text->DrawLatex(0.65, 0.86, Form("Entries = %f", DataCut.sumEntries()));
-	}
+	// Get particles ID
+	RooDataSet* DataTreeID = new RooDataSet("data", "data", DataTree, RooArgSet(ParticleID, RegionID), "RegionID==0");
+	create_histogram(*DataTreeID, outFile, "ParticleID", ParticleID, -18, 18, 36);
+	delete DataTreeID;
 
 	cout << "File created \n";
 	file0->Close();
 	outFile->Close();
+
+	delete file0;
+	delete outFile;
 }

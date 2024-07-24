@@ -34,10 +34,10 @@ HistoManager::HistoManager()
 	AnalysisManager->CreateNtupleDColumn("Phi");
 	AnalysisManager->CreateNtupleDColumn("MomentumMagnitude");
 
+	AnalysisManager->CreateNtupleDColumn("Pt");
 	AnalysisManager->CreateNtupleDColumn("Pseudorapidity");
 	AnalysisManager->CreateNtupleDColumn("CosTheta");
 
-	AnalysisManager->CreateNtupleDColumn("OldCosTheta");
 	AnalysisManager->FinishNtuple();
 }
 
@@ -87,28 +87,27 @@ void HistoManager::FillData(const G4Step* aStep, G4int regionID)
 	AnalysisManager->FillNtupleIColumn(2,  regionID);
 
 	// Pre Step
-	AnalysisManager->FillNtupleDColumn(3,  prePosition.x());
-	AnalysisManager->FillNtupleDColumn(4,  prePosition.y());
-	AnalysisManager->FillNtupleDColumn(5,  prePosition.z());
+	AnalysisManager->FillNtupleDColumn(3,  prePosition.x()); // mm
+	AnalysisManager->FillNtupleDColumn(4,  prePosition.y()); // mm
+	AnalysisManager->FillNtupleDColumn(5,  prePosition.z()); // mm
 
 	// Step
-	AnalysisManager->FillNtupleDColumn(6, aStep->GetStepLength());
+	AnalysisManager->FillNtupleDColumn(6, aStep->GetStepLength()); // mm
 
 	// Track
-	AnalysisManager->FillNtupleDColumn(7, position.x());
-	AnalysisManager->FillNtupleDColumn(8, position.y());
-	AnalysisManager->FillNtupleDColumn(9, position.z());
+	AnalysisManager->FillNtupleDColumn(7, position.x()); // mm
+	AnalysisManager->FillNtupleDColumn(8, position.y()); // mm
+	AnalysisManager->FillNtupleDColumn(9, position.z()); // mm
 
-	AnalysisManager->FillNtupleDColumn(10, aTrack->GetKineticEnergy());
-	AnalysisManager->FillNtupleDColumn(11, aTrack->GetTotalEnergy());
-	AnalysisManager->FillNtupleDColumn(12, aTrack->GetMomentumDirection().theta());
-	AnalysisManager->FillNtupleDColumn(13, aTrack->GetMomentumDirection().phi());
-	AnalysisManager->FillNtupleDColumn(14, momentum.mag());
+	AnalysisManager->FillNtupleDColumn(10, aTrack->GetKineticEnergy()); // MeV
+	AnalysisManager->FillNtupleDColumn(11, aTrack->GetTotalEnergy()); // MeV
+	AnalysisManager->FillNtupleDColumn(12, aTrack->GetMomentumDirection().theta()); // rad
+	AnalysisManager->FillNtupleDColumn(13, aTrack->GetMomentumDirection().phi()); // rad
+	AnalysisManager->FillNtupleDColumn(14, momentum.mag()); // MeV/c
 	
-	AnalysisManager->FillNtupleDColumn(15, -log(tan(aTrack->GetMomentumDirection().theta()/2.)));
-	AnalysisManager->FillNtupleDColumn(16, cos(aTrack->GetMomentumDirection().theta()));
-
-	AnalysisManager->FillNtupleDColumn(17, costheta);
+	AnalysisManager->FillNtupleDColumn(15, sqrt(momentum.x()*momentum.x() + momentum.y()*momentum.y())); // MeV/c
+	AnalysisManager->FillNtupleDColumn(16, -log(tan(aTrack->GetMomentumDirection().theta()/2.)));
+	AnalysisManager->FillNtupleDColumn(17, cos(aTrack->GetMomentumDirection().theta()));
 
 	AnalysisManager->AddNtupleRow();
 }
