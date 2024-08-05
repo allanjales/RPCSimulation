@@ -3,6 +3,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "DetectorMessenger.hh"
+#include "SensitiveDetector.hh"
 
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
@@ -82,12 +83,14 @@ public:
 	const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
 	const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
 
-	G4UserLimits*      WorldUserLimits;
-	G4UserLimits*      BakeliteUserLimits;
-	G4UserLimits*      GraphiteUserLimits;
-	G4UserLimits*      PolyethyleneUserLimits;
-	G4UserLimits*      GasUserLimits;
-	G4UserLimits*      AluminiumUserLimits;
+	G4UserLimits* WorldUserLimits;
+	G4UserLimits* BakeliteUserLimits;
+	G4UserLimits* GraphiteUserLimits;
+	G4UserLimits* PolyethyleneUserLimits;
+	G4UserLimits* GasUserLimits;
+	G4UserLimits* AluminiumUserLimits;
+
+	SensitiveDetector *sensitiveDetector;
 
 private:
 	G4LogicalVolume*   WorldLogicalVolume;
@@ -110,7 +113,9 @@ private:
 	
 	DetectorMessenger* fDetectorMessenger;
 
+	void ConstructEletricField();
 	void CreateChordFinder(G4FieldManager*, G4ElectricField*);
+	void ConstructSensitiveDetector();
 };
 
 #endif

@@ -12,6 +12,14 @@
 #include <iostream>
 using namespace std;
 
+/// @brief Creates a histogram for a variable and saves it to a file.
+/// @param data RooDataSet containing the data.
+/// @param outFile TFile for saving the histogram.
+/// @param histSaveName Name for the saved histogram.
+/// @param variable RooRealVar representing the variable.
+/// @param minVar Minimum value of the variable range.
+/// @param maxVar Maximum value of the variable range.
+/// @param nBins Number of bins in the histogram, default is 100.
 void create_histogram(const RooDataSet& data, TFile* outFile, const char* histSaveName,
 RooRealVar& variable, double minVar, double maxVar, int nBins = 100)
 {
@@ -25,6 +33,14 @@ RooRealVar& variable, double minVar, double maxVar, int nBins = 100)
 	delete frame;
 }
 
+/// @brief Creates a histogram for a variable and saves it to a file.
+///        Allows for automatic determination of the variable range if not specified to use the variable's bounds.
+/// @param data RooDataSet containing the data.
+/// @param outFile TFile for saving the histogram.
+/// @param histSaveName Name for the saved histogram.
+/// @param variable RooRealVar representing the variable.
+/// @param sameVarBounds Use variable's bounds if true, otherwise determine automatically. The default value is false.
+/// @param nBins Number of bins in the histogram, default is 100.
 void create_histogram(const RooDataSet& data, TFile* outFile, const char* histSaveName,
 RooRealVar& variable, bool sameVarBounds = false, int nBins = 100)
 {
@@ -106,6 +122,7 @@ void create_histograms()
 	// ----------------------------
 
 	TFile* file0    = TFile::Open(filePath.c_str());
+	cout << "File opened: " << filePath << "\n";
 	TTree* DataTree = (TTree*)file0->Get(("DetectedParticles"));
 	
 	RooRealVar ParticleID  ("ParticleID",     "ParticleID"    , -RooNumber::infinity(), RooNumber::infinity());
@@ -151,7 +168,9 @@ void create_histograms()
 
 	// Get particles ID
 	RooDataSet* DataTreeID = new RooDataSet("data", "data", DataTree, RooArgSet(ParticleID, RegionID), "RegionID==0");
-	create_histogram(*DataTreeID, outFile, "ParticleID", ParticleID, -18, 18, 36);
+	double minId, maxId;
+	DataTreeID->getRange(ParticleID, minId, maxId);
+	create_histogram(*DataTreeID, outFile, "ParticleID", ParticleID, minId+0.5, maxId+0.5, maxId-minId);
 	delete DataTreeID;
 
 	cout << "File created \n";

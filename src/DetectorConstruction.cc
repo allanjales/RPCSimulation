@@ -8,6 +8,8 @@ PolyethyleneLogicalVolume(), GasLogicalVolume(), AluminiumLogicalVolume(),
 WorldPhysicalVolume(), BakelitePhysicalVolume(), GraphitePhysicalVolume(),
 PolyethylenePhysicalVolume(), GasPhysicalVolume(), AluminiumPhysicalVolume()
 {
+	sensitiveDetector = new SensitiveDetector("SensitiveDetector");
+
 	fDetectorMessenger = new DetectorMessenger(this);
 
 	// Step Limiter for each material
@@ -29,6 +31,8 @@ DetectorConstruction::~DetectorConstruction()
 	delete AluminiumUserLimits;
 
 	delete fDetectorMessenger;
+
+	delete sensitiveDetector;
 }
 
 G4VPhysicalVolume *DetectorConstruction::Construct()
@@ -153,11 +157,16 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 		"AluminiumPhysicalVolume", WorldLogicalVolume, false, 0);
 	AluminiumLogicalVolume->SetUserLimits(AluminiumUserLimits);
 
-
 	return WorldPhysicalVolume;
 }
 
 void DetectorConstruction::ConstructSDandField()
+{
+	ConstructEletricField();
+	ConstructSensitiveDetector();
+}
+
+void DetectorConstruction::ConstructEletricField()
 {
 	// Set global eletric field
 	G4UniformElectricField* globalField = new G4UniformElectricField(G4ThreeVector(0., 0., 0.*kilovolt/mm));
@@ -187,4 +196,10 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 	auto fIntgrDriver = new G4MagInt_Driver(fMinStep, fStepper, fStepper->GetNumberOfVariables());
 	auto fChordFinder = new G4ChordFinder(fIntgrDriver);
 	fieldManager->SetChordFinder(fChordFinder);
+}
+
+void DetectorConstruction::ConstructSensitiveDetector()
+{
+	
+	GasLogicalVolume->SetSensitiveDetector(sensitiveDetector);
 }

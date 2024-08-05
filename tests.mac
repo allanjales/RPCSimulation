@@ -1,0 +1,11 @@
+/run/initialize
+
+/RPCSim/maxStepLength/world        100 mm
+/RPCSim/maxStepLength/bakelite     100 mm
+/RPCSim/maxStepLength/graphite     100 mm
+/RPCSim/maxStepLength/polyethylene 100 mm
+/RPCSim/maxStepLength/gas          100 mm
+/RPCSim/maxStepLength/aluminium    100 mm
+
+/RPCSim/event/printModule 10000
+/run/beamOn 100000

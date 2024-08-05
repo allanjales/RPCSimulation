@@ -14,7 +14,7 @@
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "SteppingAction.hh"
-#include "HistoManager.hh"
+#include "SensitiveDetector.hh"
 
 int main(int argc,char** argv)
 {
@@ -26,12 +26,11 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(new PhysicsList());
 	
 	PrimaryGeneratorAction* prim  = new PrimaryGeneratorAction();
-	HistoManager*           histo = new HistoManager();
-	RunAction*              run   = new RunAction(det, prim, histo);
+	RunAction*              run   = new RunAction(det, prim);
 	runManager->SetUserAction(prim);
 	runManager->SetUserAction(run);
 	runManager->SetUserAction(new EventAction(run));
-	runManager->SetUserAction(new SteppingAction(det, prim, run, histo));
+	runManager->SetUserAction(new SteppingAction(det, prim, run));
 
 	//If there is no argument, creates a interface
 	G4UIExecutive* ui = NULL;

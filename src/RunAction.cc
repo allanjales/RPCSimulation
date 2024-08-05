@@ -15,10 +15,14 @@
 #include "G4UnitsTable.hh"
 
 RunAction::RunAction(DetectorConstruction* det, 
-	PrimaryGeneratorAction* prim, HistoManager* histo)
-: detector(det), primary(prim), histoManager(histo)
+	PrimaryGeneratorAction* prim)
+: detector(det), primary(prim)
 {
-	//G4Random::setTheSeed(time(0));
+	// Get histogram
+	histoManager = detector->sensitiveDetector->histoManager;
+
+	// Random seed
+	// G4Random::setTheSeed(time(0));
 	G4RunManager::GetRunManager()->SetRandomNumberStore(false);
 }
 

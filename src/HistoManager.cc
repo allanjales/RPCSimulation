@@ -12,18 +12,16 @@ HistoManager::HistoManager()
 
 	AnalysisManager->CreateNtuple("DetectedParticles", "DetectedParticles");
 	AnalysisManager->CreateNtupleIColumn("ParticleID");
-	AnalysisManager->CreateNtupleIColumn("Event");
+	AnalysisManager->CreateNtupleIColumn("TrackID");
+	AnalysisManager->CreateNtupleIColumn("EventID");
 	AnalysisManager->CreateNtupleIColumn("RegionID");
-
-	// Pre Step
-	AnalysisManager->CreateNtupleDColumn("PreStepPositionX");
-	AnalysisManager->CreateNtupleDColumn("PreStepPositionY");
-	AnalysisManager->CreateNtupleDColumn("PreStepPositionZ");
 
 	// Step
 	AnalysisManager->CreateNtupleDColumn("StepLength");
 
 	// Post Step
+	AnalysisManager->CreateNtupleDColumn("Time");
+
 	AnalysisManager->CreateNtupleDColumn("PositionX");
 	AnalysisManager->CreateNtupleDColumn("PositionY");
 	AnalysisManager->CreateNtupleDColumn("PositionZ");
@@ -82,32 +80,30 @@ void HistoManager::FillData(const G4Step* aStep, G4int regionID)
 
 	G4AnalysisManager *AnalysisManager = G4AnalysisManager::Instance();
 
-	AnalysisManager->FillNtupleIColumn(0,  particle->GetPDGEncoding());
-	AnalysisManager->FillNtupleIColumn(1,  eventID);
-	AnalysisManager->FillNtupleIColumn(2,  regionID);
-
-	// Pre Step
-	AnalysisManager->FillNtupleDColumn(3,  prePosition.x()); // mm
-	AnalysisManager->FillNtupleDColumn(4,  prePosition.y()); // mm
-	AnalysisManager->FillNtupleDColumn(5,  prePosition.z()); // mm
+	AnalysisManager->FillNtupleIColumn(0,  particle->GetPDGEncoding()); // PDG particle ID
+	AnalysisManager->FillNtupleIColumn(1,  aTrack->GetTrackID()); // Unique ID for each track
+	AnalysisManager->FillNtupleIColumn(2,  eventID); // Unique ID for each event in this run
+	AnalysisManager->FillNtupleIColumn(3,  regionID); // Region ID (for multi sensitive detector regions)
 
 	// Step
-	AnalysisManager->FillNtupleDColumn(6, aStep->GetStepLength()); // mm
+	AnalysisManager->FillNtupleDColumn(4, aStep->GetStepLength()); // mm
 
 	// Track
-	AnalysisManager->FillNtupleDColumn(7, position.x()); // mm
-	AnalysisManager->FillNtupleDColumn(8, position.y()); // mm
-	AnalysisManager->FillNtupleDColumn(9, position.z()); // mm
+	AnalysisManager->FillNtupleDColumn(5, aTrack->GetGlobalTime()); // Time since event start (ns)
 
-	AnalysisManager->FillNtupleDColumn(10, aTrack->GetKineticEnergy()); // MeV
-	AnalysisManager->FillNtupleDColumn(11, aTrack->GetTotalEnergy()); // MeV
-	AnalysisManager->FillNtupleDColumn(12, aTrack->GetMomentumDirection().theta()); // rad
-	AnalysisManager->FillNtupleDColumn(13, aTrack->GetMomentumDirection().phi()); // rad
-	AnalysisManager->FillNtupleDColumn(14, momentum.mag()); // MeV/c
+	AnalysisManager->FillNtupleDColumn(6, position.x()); // mm
+	AnalysisManager->FillNtupleDColumn(7, position.y()); // mm
+	AnalysisManager->FillNtupleDColumn(8, position.z()); // mm
+
+	AnalysisManager->FillNtupleDColumn(9, aTrack->GetKineticEnergy()); // MeV
+	AnalysisManager->FillNtupleDColumn(10, aTrack->GetTotalEnergy()); // MeV
+	AnalysisManager->FillNtupleDColumn(11, aTrack->GetMomentumDirection().theta()); // rad
+	AnalysisManager->FillNtupleDColumn(12, aTrack->GetMomentumDirection().phi()); // rad
+	AnalysisManager->FillNtupleDColumn(13, momentum.mag()); // MeV/c
 	
-	AnalysisManager->FillNtupleDColumn(15, sqrt(momentum.x()*momentum.x() + momentum.y()*momentum.y())); // MeV/c
-	AnalysisManager->FillNtupleDColumn(16, -log(tan(aTrack->GetMomentumDirection().theta()/2.)));
-	AnalysisManager->FillNtupleDColumn(17, cos(aTrack->GetMomentumDirection().theta()));
+	AnalysisManager->FillNtupleDColumn(14, sqrt(momentum.x()*momentum.x() + momentum.y()*momentum.y())); // MeV/c
+	AnalysisManager->FillNtupleDColumn(15, -log(tan(aTrack->GetMomentumDirection().theta()/2.)));
+	AnalysisManager->FillNtupleDColumn(16, cos(aTrack->GetMomentumDirection().theta()));
 
 	AnalysisManager->AddNtupleRow();
 }

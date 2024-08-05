@@ -11,3 +11,6 @@ buildmt/*
 
 # Ignora arquivos do vscode
 .vscode/*
+
+# Ignora checkpoints dos jupyter notebook
+.ipynb_checkpoints/

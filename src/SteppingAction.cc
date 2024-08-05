@@ -8,8 +8,8 @@
 #include "G4PolarizationHelper.hh"
 
 SteppingAction::SteppingAction(DetectorConstruction* det, 
-	PrimaryGeneratorAction* prim, RunAction* ra, HistoManager* hist)
-: detector(det), primary(prim), runAction(ra), histoManager(hist)
+	PrimaryGeneratorAction* prim, RunAction* ra)
+: detector(det), primary(prim), runAction(ra)
 {}
 
 SteppingAction::~SteppingAction()
@@ -17,6 +17,7 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
+	/*
 	G4StepPoint* prePoint = aStep->GetPreStepPoint();
 	G4StepPoint* endPoint = aStep->GetPostStepPoint();
 
@@ -26,6 +27,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	{
 		StoreParticleData(aStep, 0);
 	}
+	*/
 
 	/*
 	if (ParticlePassesZPlane(prePoint, endPoint, -3.4 )) StoreParticleData(aStep, 1);
@@ -55,9 +57,4 @@ bool SteppingAction::ParticlePassesZPlane(G4StepPoint* prePoint, G4StepPoint* en
 
 	//return (preZ < zPlane && endZ > zPlane) || (preZ > zPlane && endZ < zPlane);
 	return (preZ - zPlane) * (endZ - zPlane) < 0;
-}
-
-void SteppingAction::StoreParticleData(const G4Step* aStep, G4int regionID)
-{
-	histoManager->FillData(aStep, regionID);
 }
