@@ -1,18 +1,7 @@
 #include "EventAction.hh"
 
-#include "EventActionMessenger.hh"
-
-#include "G4Event.hh"
-#include "G4TrajectoryContainer.hh"
-
-#include "G4Trajectory.hh"
-#include "G4VVisManager.hh"
-
-#include "G4UnitsTable.hh"
-#include "RunAction.hh"
-
-EventAction::EventAction(RunAction* ra)
-: printModule(1000), eventMessenger(0), runAction(ra)
+EventAction::EventAction(RunAction* runAction)
+: printModule(1000), runAction(runAction)
 {
 	eventMessenger = new EventActionMessenger(this);
 }

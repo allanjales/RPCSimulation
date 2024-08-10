@@ -1,11 +1,12 @@
 #ifndef EventAction_hh
 #define EventAction_hh
 
-#include "G4UserEventAction.hh"
-#include "globals.hh"
+#include <G4UserEventAction.hh>
+#include <globals.hh>
+#include "RunAction.hh"
 
-class EventActionMessenger;
-class RunAction;
+#include <G4Event.hh>
+#include "EventActionMessenger.hh"
 
 class EventAction : public G4UserEventAction
 {

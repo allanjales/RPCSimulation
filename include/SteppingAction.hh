@@ -1,14 +1,13 @@
 #ifndef SteppingAction_hh
 #define SteppingAction_hh
 
-#include "G4UserSteppingAction.hh"
-#include "globals.hh"
-#include <G4StepPoint.hh>
+#include <G4UserSteppingAction.hh>
+#include <globals.hh>
+#include <G4Step.hh>
 #include <G4Track.hh>
-
-class DetectorConstruction;
-class PrimaryGeneratorAction;
-class RunAction;
+#include "DetectorConstruction.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
 
 class SteppingAction : public G4UserSteppingAction
 {

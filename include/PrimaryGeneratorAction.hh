@@ -1,21 +1,11 @@
 #ifndef PrimaryGeneratorAction_hh
 #define PrimaryGeneratorAction_hh
 
-#include "G4VUserPrimaryGeneratorAction.hh"
+#include <G4VUserPrimaryGeneratorAction.hh>
+#include <G4ParticleGun.hh>
 
-#include "G4ParticleGun.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4ParticleTable.hh"
-
-/*
-#include "DetectorConstruction.hh"
-
-#include "G4Event.hh"
-#include "G4ParticleGun.hh"
-#include "G4ParticleTable.hh"
-#include "G4ParticleDefinition.hh"
-#include "globals.hh"
-*/
+#include <G4ParticleTable.hh>
+#include <G4SystemOfUnits.hh>
 
 class PrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {

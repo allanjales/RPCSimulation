@@ -1,16 +1,11 @@
 #include "DetectorConstruction.hh"
-#include "G4UserLimits.hh"
-#include "G4RegionStore.hh"
 
 DetectorConstruction::DetectorConstruction()
-: WorldLogicalVolume(), BakeliteLogicalVolume(), GraphiteLogicalVolume(),
-PolyethyleneLogicalVolume(), GasLogicalVolume(), AluminiumLogicalVolume(),
-WorldPhysicalVolume(), BakelitePhysicalVolume(), GraphitePhysicalVolume(),
-PolyethylenePhysicalVolume(), GasPhysicalVolume(), AluminiumPhysicalVolume()
 {
-	sensitiveDetector = new SensitiveDetector("SensitiveDetector");
+	detectorConstructionMessenger = new DetectorConstructionMessenger(this);
 
-	fDetectorMessenger = new DetectorMessenger(this);
+	dataHandler = new DataHandler();
+	sensitiveDetector = new SensitiveDetector("SensitiveDetector", dataHandler);
 
 	// Step Limiter for each material
 	WorldUserLimits        = new G4UserLimits(4*mm);
@@ -30,7 +25,7 @@ DetectorConstruction::~DetectorConstruction()
 	delete GasUserLimits;
 	delete AluminiumUserLimits;
 
-	delete fDetectorMessenger;
+	delete detectorConstructionMessenger;
 
 	delete sensitiveDetector;
 }
@@ -41,13 +36,15 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	// Materials
 	// ----------------
 
+	G4NistManager* nist = G4NistManager::Instance();
+
 	// C2H2F4 Gas
 
-	G4Element* H = new G4Element("Hydrogen", "H", 1, 1.01*g/mole);
-	G4Element* C = new G4Element("Carbon" ,  "C", 6, 12.01*g/mole);
-	G4Element* F = new G4Element("Fluor",    "F", 9, 19.00*g/mole);
+	G4Element* H = nist->FindOrBuildElement("H");
+	G4Element* C = nist->FindOrBuildElement("C");
+	G4Element* F = nist->FindOrBuildElement("F");
 
-	G4Material* C2H2F4Material = new G4Material("RpcGas", 4089.26*g/m3, 3, kStateGas, 300.*kelvin, 1.*bar);
+	G4Material* C2H2F4Material = new G4Material("C2H2F4", 4089.26*g/m3, 3, kStateGas, 300.*kelvin, 1.*bar);
 	C2H2F4Material->AddElement(C, 2);
 	C2H2F4Material->AddElement(H, 2);
 	C2H2F4Material->AddElement(F, 4);
@@ -55,12 +52,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
 	// Aluminium Plate
 
-	G4Material* AluminiumMaterial = new G4Material("Aluminum", 13, 26.98*g/mole, 2.7*g/cm3);
+	G4Material* AluminiumMaterial = nist->FindOrBuildMaterial("G4_Al");
 
 
 	// Vacuum, Bakelite, Graphyte, Polyethylene
 
-	G4NistManager* nist = G4NistManager::Instance();
 	G4Material* VacuumMaterial = nist->FindOrBuildMaterial("G4_Galactic");
 	G4Material* BakeliteMaterial = nist->FindOrBuildMaterial("G4_BAKELITE");
 	G4Material* GraphiteMaterial = nist->FindOrBuildMaterial("G4_GRAPHITE");
@@ -162,11 +158,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
 void DetectorConstruction::ConstructSDandField()
 {
-	ConstructEletricField();
+	ConstructElectricField();
 	ConstructSensitiveDetector();
 }
 
-void DetectorConstruction::ConstructEletricField()
+void DetectorConstruction::ConstructElectricField()
 {
 	// Set global eletric field
 	G4UniformElectricField* globalField = new G4UniformElectricField(G4ThreeVector(0., 0., 0.*kilovolt/mm));
@@ -188,18 +184,18 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 {
 	auto globalFieldEq = new G4EqMagElectricField(field);
 
-	auto fStepper = new G4ClassicalRK4(globalFieldEq, 8);
+	auto stepper = new G4ClassicalRK4(globalFieldEq, 8);
 	G4cout << "G4ClassicalRK4 (default) is called" << G4endl;
 
-	float fMinStep  = 0.02/1000*mm;
-	G4cout << "The minimal step is in integral is equal to " << G4BestUnit(fMinStep, "Length") << G4endl;
-	auto fIntgrDriver = new G4MagInt_Driver(fMinStep, fStepper, fStepper->GetNumberOfVariables());
-	auto fChordFinder = new G4ChordFinder(fIntgrDriver);
-	fieldManager->SetChordFinder(fChordFinder);
+	float minStep  = 0.02/1000*mm;
+	G4cout << "The minimal step is in integral is equal to " << G4BestUnit(minStep, "Length") << G4endl;
+	auto intgrDriver = new G4IntegrationDriver<G4ClassicalRK4>(minStep, stepper, stepper->GetNumberOfVariables());
+	auto chordFinder = new G4ChordFinder(intgrDriver);
+	chordFinder->SetDeltaChord(minStep);
+	fieldManager->SetChordFinder(chordFinder);
 }
 
 void DetectorConstruction::ConstructSensitiveDetector()
 {
-	
 	GasLogicalVolume->SetSensitiveDetector(sensitiveDetector);
 }

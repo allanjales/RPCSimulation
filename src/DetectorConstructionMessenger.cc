@@ -1,20 +1,11 @@
-#include "DetectorMessenger.hh"
+#include "DetectorConstructionMessenger.hh"
 #include "DetectorConstruction.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-#include "G4UIcmdWithoutParameter.hh"
 
-#include "G4UserLimits.hh"
-#include "G4UnitsTable.hh"
-
-using namespace std;
-
-DetectorMessenger::DetectorMessenger(DetectorConstruction* Detector)
-: fDetector(Detector)
+DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstruction* detector)
+: detector(detector)
 {
 	eventDir = new G4UIdirectory("/RPCSim/maxStepLength/");
-	eventDir ->SetGuidance("step control");
+	eventDir ->SetGuidance("Step control");
 
 	worldMaxStepLengthcmd = new G4UIcmdWithADoubleAndUnit("/RPCSim/maxStepLength/world", this);
 	worldMaxStepLengthcmd->SetGuidance("Sets the max step length in the world");
@@ -53,7 +44,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Detector)
 	aluminiumMaxStepLengthcmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
-DetectorMessenger::~DetectorMessenger()
+DetectorConstructionMessenger::~DetectorConstructionMessenger()
 {
 	delete worldMaxStepLengthcmd;
 	delete bakeliteMaxStepLengthcmd;
@@ -65,42 +56,42 @@ DetectorMessenger::~DetectorMessenger()
 	delete eventDir;
 }
 
-void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void DetectorConstructionMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
 	if (command == worldMaxStepLengthcmd)
 	{
 		G4double maxStepLength = worldMaxStepLengthcmd->GetNewDoubleValue(newValue);
-		fDetector->WorldUserLimits->SetMaxAllowedStep(maxStepLength);
+		detector->WorldUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the world        set to " << G4BestUnit(maxStepLength, "Length") << "\n";
 	}
 	else if (command == polyethyleneMaxStepLengthcmd)
 	{
 		G4double maxStepLength = polyethyleneMaxStepLengthcmd->GetNewDoubleValue(newValue);
-		fDetector->PolyethyleneUserLimits->SetMaxAllowedStep(maxStepLength);
+		detector->PolyethyleneUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the polyethylene set to " << G4BestUnit(maxStepLength, "Length") << "\n";
 	}
 	else if (command == graphiteMaxStepLengthcmd)
 	{
 		G4double maxStepLength = graphiteMaxStepLengthcmd->GetNewDoubleValue(newValue);
-		fDetector->GraphiteUserLimits->SetMaxAllowedStep(maxStepLength);
+		detector->GraphiteUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the graphite     set to " << G4BestUnit(maxStepLength, "Length") << "\n";
 	}
 	else if (command == bakeliteMaxStepLengthcmd)
 	{
 		G4double maxStepLength = bakeliteMaxStepLengthcmd->GetNewDoubleValue(newValue);
-		fDetector->BakeliteUserLimits->SetMaxAllowedStep(maxStepLength);
+		detector->BakeliteUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the bakelite     set to " << G4BestUnit(maxStepLength, "Length") << "\n";
 	}
 	else if (command == gasMaxStepLengthcmd)
 	{
 		G4double maxStepLength = gasMaxStepLengthcmd->GetNewDoubleValue(newValue);
-		fDetector->GasUserLimits->SetMaxAllowedStep(maxStepLength);
+		detector->GasUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the gas          set to " << G4BestUnit(maxStepLength, "Length") << "\n";
 	}
 	else if (command == aluminiumMaxStepLengthcmd)
 	{
 		G4double maxStepLength = aluminiumMaxStepLengthcmd->GetNewDoubleValue(newValue);
-		fDetector->AluminiumUserLimits->SetMaxAllowedStep(maxStepLength);
+		detector->AluminiumUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the aluminium    set to " << G4BestUnit(maxStepLength, "Length") << "\n";
 	}
 }

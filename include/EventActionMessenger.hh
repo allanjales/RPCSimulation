@@ -1,13 +1,10 @@
 #ifndef EventActionMessenger_hh
 #define EventActionMessenger_hh
 
-#include "G4UImessenger.hh"
-#include "globals.hh"
+#include <G4UImessenger.hh>
+#include <G4UIcmdWithAnInteger.hh>
 
 class EventAction;
-class G4UIdirectory;
-class G4UIcmdWithAnInteger;
-
 class EventActionMessenger: public G4UImessenger
 {
 public:

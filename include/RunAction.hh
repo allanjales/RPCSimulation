@@ -1,13 +1,17 @@
 #ifndef RunAction_hh
 #define RunAction_hh
 
-#include "G4UserRunAction.hh"
-#include "globals.hh"
+#include <G4UserRunAction.hh>
+#include "DetectorConstruction.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "DataHandler.hh"
 
-class DetectorConstruction;
-class PrimaryGeneratorAction;
-class HistoManager;
-class G4Run;
+#include "SensitiveDetector.hh"
+#include <G4RunManager.hh>
+#include <G4Run.hh>
+#include <Randomize.hh>
+#include <G4SystemOfUnits.hh>
+#include <G4UnitsTable.hh>
 
 class RunAction : public G4UserRunAction
 {
@@ -21,7 +25,7 @@ class RunAction : public G4UserRunAction
 	private:
 		DetectorConstruction* detector;
 		PrimaryGeneratorAction* primary;
-		HistoManager* histoManager;
+		DataHandler* dataHandler;
 
 		int runStartedTime;
 	};

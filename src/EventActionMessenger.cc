@@ -1,15 +1,11 @@
 #include "EventActionMessenger.hh"
-
 #include "EventAction.hh"
-
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAnInteger.hh"
 
 EventActionMessenger::EventActionMessenger(EventAction* EventAction)
 : eventAction(EventAction)
 {
 	eventDir = new G4UIdirectory("/RPCSim/event/");
-	eventDir ->SetGuidance("event control");
+	eventDir ->SetGuidance("Event control");
 
 	PrintCmd = new G4UIcmdWithAnInteger("/RPCSim/event/printModule", this);
 	PrintCmd->SetGuidance("Sets the event printing frequency");

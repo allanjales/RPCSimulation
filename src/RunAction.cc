@@ -1,25 +1,10 @@
 #include "RunAction.hh"
 
-#include "DetectorConstruction.hh"
-#include "PrimaryGeneratorAction.hh"
-#include "HistoManager.hh"
-
-#include "G4Run.hh"
-#include "G4RunManager.hh"
-#include "G4UnitsTable.hh"
-#include "G4EmCalculator.hh"
-
-#include "Randomize.hh"
-#include <iomanip>
-
-#include "G4UnitsTable.hh"
-
-RunAction::RunAction(DetectorConstruction* det, 
-	PrimaryGeneratorAction* prim)
-: detector(det), primary(prim)
+RunAction::RunAction(DetectorConstruction* detector, PrimaryGeneratorAction* primary)
+: detector(detector), primary(primary)
 {
-	// Get histogram
-	histoManager = detector->sensitiveDetector->histoManager;
+	// Get the main data handler
+	dataHandler = detector->dataHandler;
 
 	// Random seed
 	// G4Random::setTheSeed(time(0));
@@ -37,7 +22,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 
 	std::stringstream strRunID;
 	strRunID << aRun->GetRunID();
-	histoManager->Book("output_" + strRunID.str());
+	dataHandler->Book("output_" + strRunID.str());
 	runStartedTime = time(0);
 }
 
@@ -57,7 +42,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	if (aRun->GetNumberOfEvent() == 0)
 		return;
 
-	histoManager->Save();
+	dataHandler->Save();
 
 	G4Random::showEngineStatus();
 }

@@ -1,22 +1,16 @@
 #ifndef SensitiveDetector_hh
 #define SensitiveDetector_hh
 
-#include "HistoManager.hh"
-
 #include "G4VSensitiveDetector.hh"
-#include "G4AnalysisManager.hh"
-#include "G4RunManager.hh"
-#include "G4SystemOfUnits.hh"
+#include "DataHandler.hh"
 
 class SensitiveDetector : public G4VSensitiveDetector
 {
 public:
-	SensitiveDetector(G4String);
+	SensitiveDetector(G4String, DataHandler*);
 	~SensitiveDetector();
-	
-    HistoManager *histoManager;
-
 private:
+    DataHandler *dataHandler;
 	virtual G4bool ProcessHits(G4Step*, G4TouchableHistory*);
 };
 
