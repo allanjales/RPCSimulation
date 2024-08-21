@@ -4,8 +4,8 @@
 DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstruction* detector)
 : detector(detector)
 {
-	eventDir = new G4UIdirectory("/RPCSim/maxStepLength/");
-	eventDir ->SetGuidance("Step control");
+	stepDir = new G4UIdirectory("/RPCSim/maxStepLength/");
+	stepDir ->SetGuidance("Step control");
 
 	worldMaxStepLengthcmd = new G4UIcmdWithADoubleAndUnit("/RPCSim/maxStepLength/world", this);
 	worldMaxStepLengthcmd->SetGuidance("Sets the max step length in the world");
@@ -42,6 +42,11 @@ DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstructio
 	aluminiumMaxStepLengthcmd->SetParameterName("length", false);
 	aluminiumMaxStepLengthcmd->SetRange("length>0");
 	aluminiumMaxStepLengthcmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+	gasMaterialcmd = new G4UIcmdWithAString("/RPCSim/gasMaterial", this);
+	gasMaterialcmd->SetGuidance("Sets the gas material based on the NIST database or C2H2F4, SF6, CO2");
+	gasMaterialcmd->SetParameterName("materialName", false);
+	gasMaterialcmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
 DetectorConstructionMessenger::~DetectorConstructionMessenger()
@@ -53,7 +58,7 @@ DetectorConstructionMessenger::~DetectorConstructionMessenger()
 	delete gasMaxStepLengthcmd;
 	delete aluminiumMaxStepLengthcmd;
 	
-	delete eventDir;
+	delete stepDir;
 }
 
 void DetectorConstructionMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
@@ -93,5 +98,26 @@ void DetectorConstructionMessenger::SetNewValue(G4UIcommand* command, G4String n
 		G4double maxStepLength = aluminiumMaxStepLengthcmd->GetNewDoubleValue(newValue);
 		detector->AluminiumUserLimits->SetMaxAllowedStep(maxStepLength);
 		G4cout << "Max step length in the aluminium    set to " << G4BestUnit(maxStepLength, "Length") << "\n";
+	}
+	else if (command == gasMaterialcmd)
+	{
+		G4String materialName = newValue;
+		if (materialName == "C2H2F4")
+		{
+			detector->SetGasMaterial(detector->C2H2F4Material);
+		}
+		else if (materialName == "SF6")
+		{
+			detector->SetGasMaterial(detector->SF6Material);
+		}
+		else if (materialName == "CO2")
+		{
+			detector->SetGasMaterial(detector->CO2Material);
+		}
+		else
+		{
+			auto newMaterial =  G4NistManager::Instance()->FindOrBuildMaterial(materialName);
+			detector->SetGasMaterial(newMaterial);
+		}
 	}
 }

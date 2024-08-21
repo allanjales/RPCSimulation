@@ -8,15 +8,15 @@ DataHandler::DataHandler()
 
 	analysisManager->CreateNtuple("DetectedParticles", "DetectedParticles");
 	analysisManager->CreateNtupleIColumn("ParticleID");
-	analysisManager->CreateNtupleIColumn("TrackID");
-	analysisManager->CreateNtupleIColumn("EventID");
-	analysisManager->CreateNtupleIColumn("RegionID");
+	//analysisManager->CreateNtupleIColumn("TrackID");
+	//analysisManager->CreateNtupleIColumn("EventID");
+	//analysisManager->CreateNtupleIColumn("RegionID");
 
 	// Step
-	analysisManager->CreateNtupleDColumn("StepLength");
+	//analysisManager->CreateNtupleDColumn("StepLength");
 
 	// Post Step
-	analysisManager->CreateNtupleDColumn("Time");
+	//analysisManager->CreateNtupleDColumn("Time");
 
 	analysisManager->CreateNtupleDColumn("PositionX");
 	analysisManager->CreateNtupleDColumn("PositionY");
@@ -37,6 +37,8 @@ DataHandler::DataHandler()
 
 DataHandler::~DataHandler()
 {
+	if (analysisManager->IsOpenFile()) Save();
+	
 	delete dataHandlerMessenger;
 }
 
@@ -69,15 +71,15 @@ void DataHandler::FillData(const G4Step* aStep, G4int regionID)
 
 	int i = 0;
 	analysisManager->FillNtupleIColumn(i++,  particle->GetPDGEncoding()); // PDG particle ID
-	analysisManager->FillNtupleIColumn(i++,  aTrack->GetTrackID()); // Unique ID for each track
-	analysisManager->FillNtupleIColumn(i++,  eventID); // Unique ID for each event in this run
-	analysisManager->FillNtupleIColumn(i++,  regionID); // Region ID (for multi sensitive detector regions)
+	//analysisManager->FillNtupleIColumn(i++,  aTrack->GetTrackID()); // Unique ID for each track
+	//analysisManager->FillNtupleIColumn(i++,  eventID); // Unique ID for each event in this run
+	//analysisManager->FillNtupleIColumn(i++,  regionID); // Region ID (for multi sensitive detector regions)
 
 	// Step
-	analysisManager->FillNtupleDColumn(i++, aStep->GetStepLength()); // mm
+	//analysisManager->FillNtupleDColumn(i++, aStep->GetStepLength()); // mm
 
 	// Track
-	analysisManager->FillNtupleDColumn(i++, aTrack->GetGlobalTime()); // Time since event start (ns)
+	//analysisManager->FillNtupleDColumn(i++, aTrack->GetGlobalTime()); // Time since event start (ns)
 
 	analysisManager->FillNtupleDColumn(i++, position.x()); // mm
 	analysisManager->FillNtupleDColumn(i++, position.y()); // mm

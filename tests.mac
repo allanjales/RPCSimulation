@@ -7,5 +7,6 @@
 /RPCSim/maxStepLength/gas          0.02 mm
 /RPCSim/maxStepLength/aluminium    0.02 mm
 
+/gun/particle mu+
 /RPCSim/event/printModule 1000
 /run/beamOn 10000

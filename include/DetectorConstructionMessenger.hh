@@ -4,6 +4,7 @@
 #include <G4UImessenger.hh>
 #include <G4UIdirectory.hh>
 #include <G4UIcmdWithADoubleAndUnit.hh>
+#include <G4UIcmdWithAString.hh>
 
 #include <G4SystemOfUnits.hh>
 #include <G4UnitsTable.hh>
@@ -20,14 +21,15 @@ public:
 private:
 	DetectorConstruction* detector;
 
-	G4UIdirectory* eventDir;
-
+	G4UIdirectory* stepDir;
 	G4UIcmdWithADoubleAndUnit* worldMaxStepLengthcmd;
 	G4UIcmdWithADoubleAndUnit* polyethyleneMaxStepLengthcmd;
 	G4UIcmdWithADoubleAndUnit* graphiteMaxStepLengthcmd;
 	G4UIcmdWithADoubleAndUnit* bakeliteMaxStepLengthcmd;
 	G4UIcmdWithADoubleAndUnit* gasMaxStepLengthcmd;
 	G4UIcmdWithADoubleAndUnit* aluminiumMaxStepLengthcmd;
+
+	G4UIcmdWithAString* gasMaterialcmd;
 };
 
 #endif

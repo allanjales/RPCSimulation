@@ -8,12 +8,12 @@ DetectorConstruction::DetectorConstruction()
 	sensitiveDetector = new SensitiveDetector("SensitiveDetector", dataHandler);
 
 	// Step Limiter for each material
-	WorldUserLimits        = new G4UserLimits(4*mm);
-	PolyethyleneUserLimits = new G4UserLimits(0.05*mm);
-	GraphiteUserLimits     = new G4UserLimits(0.05*mm);
-	BakeliteUserLimits     = new G4UserLimits(0.5*mm);
-	GasUserLimits          = new G4UserLimits(0.5*mm);
-	AluminiumUserLimits    = new G4UserLimits(0.01*mm);
+	WorldUserLimits        = new G4UserLimits();
+	PolyethyleneUserLimits = new G4UserLimits();
+	GraphiteUserLimits     = new G4UserLimits();
+	BakeliteUserLimits     = new G4UserLimits();
+	GasUserLimits          = new G4UserLimits();
+	AluminiumUserLimits    = new G4UserLimits();
 }
 
 DetectorConstruction::~DetectorConstruction()
@@ -38,16 +38,30 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
 	G4NistManager* nist = G4NistManager::Instance();
 
-	// C2H2F4 Gas
-
 	G4Element* H = nist->FindOrBuildElement("H");
 	G4Element* C = nist->FindOrBuildElement("C");
 	G4Element* F = nist->FindOrBuildElement("F");
+	G4Element* S = nist->FindOrBuildElement("S");
+	G4Element* O = nist->FindOrBuildElement("O");
 
-	G4Material* C2H2F4Material = new G4Material("C2H2F4", 4089.26*g/m3, 3, kStateGas, 300.*kelvin, 1.*bar);
+	// C2H2F4 Gas
+
+	C2H2F4Material = new G4Material("C2H2F4", 4.25*kg/m3, 3, kStateGas, 295.*kelvin, 0.00168*bar);
 	C2H2F4Material->AddElement(C, 2);
 	C2H2F4Material->AddElement(H, 2);
 	C2H2F4Material->AddElement(F, 4);
+
+	// SF6 Gas
+
+	SF6Material = new G4Material("SF6", 6.17*kg/m3, 2, kStateGas, 295.*kelvin, 0.00168*bar);
+	SF6Material->AddElement(S, 1);
+	SF6Material->AddElement(F, 6);
+
+	// SF6 Gas
+
+	CO2Material = new G4Material("CO2", 1.98*kg/m3, 2, kStateGas, 295.*kelvin, 0.00168*bar);
+	CO2Material->AddElement(C, 1);
+	CO2Material->AddElement(O, 2);
 
 
 	// Aluminium Plate
@@ -138,6 +152,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	GasPhysicalVolume = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), GasLogicalVolume,
 		"GasPhysicalVolume", WorldLogicalVolume, false, 0);
 	GasLogicalVolume->SetUserLimits(GasUserLimits);
+	GasLogicalVolume->SetMaterial(C2H2F4Material);
 
 
 	// Aluminium Plate
@@ -188,7 +203,7 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 	G4cout << "G4ClassicalRK4 (default) is called" << G4endl;
 
 	float minStep  = 0.02/1000*mm;
-	G4cout << "The minimal step is in integral is equal to " << G4BestUnit(minStep, "Length") << G4endl;
+	G4cout << "The minimal step in integral is equal to " << G4BestUnit(minStep, "Length") << G4endl;
 	auto intgrDriver = new G4IntegrationDriver<G4ClassicalRK4>(minStep, stepper, stepper->GetNumberOfVariables());
 	auto chordFinder = new G4ChordFinder(intgrDriver);
 	chordFinder->SetDeltaChord(minStep);
@@ -198,4 +213,10 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 void DetectorConstruction::ConstructSensitiveDetector()
 {
 	GasLogicalVolume->SetSensitiveDetector(sensitiveDetector);
+}
+
+void DetectorConstruction::SetGasMaterial(G4Material* material)
+{
+	GasLogicalVolume->SetMaterial(material);
+	G4cout << "Gas material set to " + material->GetName() + "\n";
 }

@@ -22,3 +22,8 @@ Para rodar com tudo:
 ~~~sh
 ./RPCSimulation run.mac
 ~~~
+
+Para rodar com tudo e salvar num arquivo log.txt:
+~~~sh
+./RPCSimulation run.mac | tee log.txt
+~~~

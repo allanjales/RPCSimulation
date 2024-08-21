@@ -31,8 +31,13 @@ public:
 	
 	void ConstructSDandField();
 
-	const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
-	const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
+	//const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
+	//const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
+	void SetGasMaterial(G4Material* material);
+
+	G4Material* C2H2F4Material;
+	G4Material* SF6Material;
+	G4Material* CO2Material;
 
 	G4UserLimits* WorldUserLimits;
 	G4UserLimits* BakeliteUserLimits;
