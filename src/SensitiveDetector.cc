@@ -16,8 +16,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist)
 	G4ParticleDefinition* particle = aStep->GetTrack()->GetDefinition();
 	if (particle->GetParticleType() != "lepton" && particle->GetParticleType() != "gamma")
 	{
-		G4cout << "Particle Type: " << particle->GetParticleType() << "\n";
-		G4cout << particle->GetParticleName() << " | " << particle->GetPDGEncoding() << "\n";
+		G4cout << "Ion detected\n";
 	}
 	
 	// Store info

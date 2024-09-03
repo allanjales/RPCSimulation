@@ -37,8 +37,6 @@ DataHandler::DataHandler()
 
 DataHandler::~DataHandler()
 {
-	if (analysisManager->IsOpenFile()) Save();
-	
 	delete dataHandlerMessenger;
 }
 

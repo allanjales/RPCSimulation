@@ -51,6 +51,10 @@ int main(int argc,char** argv)
 		UImanager->ApplyCommand(command + fileName);
 	}
 
+	UImanager->ApplyCommand("/run/verbose 2");
+	UImanager->ApplyCommand("/event/verbose 2");
+	UImanager->ApplyCommand("/tracking/verbose 2");
+
 	// Job termination
 	delete runManager;
 	if (ui) delete ui;
