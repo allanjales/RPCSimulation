@@ -1,10 +1,14 @@
 /run/initialize
 
-/RPCSim/maxStepLength/world        0.02 mm
-/RPCSim/maxStepLength/bakelite     0.02 mm
-/RPCSim/maxStepLength/graphite     0.02 mm
-/RPCSim/maxStepLength/polyethylene 0.02 mm
-/RPCSim/maxStepLength/gas          0.02 mm
+/gun/energy 150 GeV
+/gun/particle mu+
+
+/RPCSim/maxStepLength/world        10 mm
+/RPCSim/maxStepLength/bakelite     0.1 mm
+/RPCSim/maxStepLength/graphite     0.1 mm
+/RPCSim/maxStepLength/polyethylene 1 mm
+/RPCSim/maxStepLength/gas          1 mm
 /RPCSim/maxStepLength/aluminium    0.02 mm
 
 /run/beamOn 1000000
+/RPCSim/event/printModule 1000

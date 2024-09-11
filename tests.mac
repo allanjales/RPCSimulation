@@ -1,11 +1,8 @@
-/run/initialize
+#/run/verbose 2
+#/event/verbose 2
+#/tracking/verbose 2
 
-/RPCSim/maxStepLength/world        0.02 mm
-/RPCSim/maxStepLength/bakelite     0.02 mm
-/RPCSim/maxStepLength/graphite     0.02 mm
-/RPCSim/maxStepLength/polyethylene 0.02 mm
-/RPCSim/maxStepLength/gas          0.02 mm
-/RPCSim/maxStepLength/aluminium    0.02 mm
+/run/initialize
 
 /gun/particle mu+
 /RPCSim/event/printModule 1000

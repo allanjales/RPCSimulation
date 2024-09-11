@@ -30,9 +30,12 @@ public:
 	/// @param minVar Minimum value of the variable range.
 	/// @param maxVar Maximum value of the variable range.
 	/// @param nBins Number of bins in the histogram, default is 100.
-	void static Histogram1D (const RooDataSet& data, TFile* outFile, const char* histSaveName,
-	RooRealVar& variable, double minVar, double maxVar, int nBins = 100)
+	void static Histogram1DRanged(const RooDataSet& data, TFile* outFile, const char* histSaveName,
+	RooRealVar& variable, double minVar, double maxVar, int nBins = 100, bool versbose = true)
 	{
+
+		if (versbose)
+			cout << "\nTH1 for " << variable.GetName() << " in (" << minVar << "," << maxVar << ") range (nBins)...";
 		// Create histogram for the variable and plot data on it
 		RooPlot* frame = variable.frame(minVar, maxVar, nBins);
 		data.plotOn(frame);
@@ -41,6 +44,9 @@ public:
 		outFile->cd();
 		frame->getHist()->Write(histSaveName);
 		delete frame;
+
+		if (versbose)
+			cout << " created.\n";
 	}
 
 	/// @brief Creates a histogram for a variable and saves it to a file.
@@ -67,16 +73,16 @@ public:
 			data.getRange(variable, minVar, maxVar);
 		}
 
-		cout << "TH1 for " << variable.GetName() << (sameVarBounds ? " using same var bounds" : " getting min-max") << "\n";
+		cout << "\nTH1 for " << variable.GetName() << (sameVarBounds ? " using same var bounds" : " getting min-max") << "\n";
 		cout << "> Min: " << minVar << "\n";
-		cout << "> Max: " << maxVar << "\n\n";
+		cout << "> Max: " << maxVar << "\n";
 
-		Histogram1D(data, outFile, histSaveName, variable, minVar, maxVar, nBins);
+		Histogram1DRanged(data, outFile, histSaveName, variable, minVar, maxVar, nBins, false);
 	}
 
 	// 2 Dimensional Histogram
 
-	void static Histogram2D(const RooDataSet& data, TFile* outFile, const char* histSaveName,
+	void static Histogram2DRanged(const RooDataSet& data, TFile* outFile, const char* histSaveName,
 	RooRealVar& xVariable, double xMin, double xMax, int xNBins,
 	RooRealVar& yVariable, double yMin, double yMax, int yNBins)
 	{
@@ -119,7 +125,7 @@ public:
 		cout << "> Min " << yVariable.GetName() << ": " << yMin << "\n";
 		cout << "> Max " << yVariable.GetName() << ": " << yMax << "\n\n";
 
-		Histogram2D(data, outFile, histSaveName, xVariable, xMin, xMax, xNBins, yVariable, yMin, yMax, yNBins);
+		Histogram2DRanged(data, outFile, histSaveName, xVariable, xMin, xMax, xNBins, yVariable, yMin, yMax, yNBins);
 	}
 
 	// 3 Dimensional Scattering

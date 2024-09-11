@@ -11,9 +11,9 @@ using namespace std;
 
 void create_histograms()
 {
-	string filePath = "../build/results/output_0_amostra.root";
-	// ParticleID 11 -> Electron; RegionID 0 -> Gas volume
-	string cutString = "ParticleID==11 && RegionID==0";
+	string filePath = "../build/results/output_0.root";
+	// ParticleID 11 -> Electron
+	string cutString = "ParticleID==11";
 
 	// ----------------------------
 	// Open file and get tree
@@ -26,7 +26,6 @@ void create_histograms()
 	constexpr double INF = RooNumber::infinity();
 	constexpr double PI  = TMath::Pi();
 	RooRealVar ParticleID  ("ParticleID",   "ParticleID",  -INF, INF);
-	RooRealVar RegionID    ("RegionID",     "RegionID",     0,   INF);
 	
 	RooRealVar PositionX   ("PositionX",    "PositionX",   -INF, INF);
 	RooRealVar PositionY   ("PositionY",    "PositionY",   -INF, INF);
@@ -43,7 +42,7 @@ void create_histograms()
 	RooRealVar CosTheta    ("CosTheta",     "CosTheta",    -1.,  1.);
 	
 	// Open tree file
-	RooArgSet vars(ParticleID, RegionID, PositionX, PositionY, PositionZ, KinectEnergy, TotalEnergy,
+	RooArgSet vars(ParticleID, PositionX, PositionY, PositionZ, KinectEnergy, TotalEnergy,
 	Theta, Phi, Momentum, Pt, Eta, CosTheta);
 	RooDataSet* DataCut = new RooDataSet("data", "data", DataTree, vars, cutString.c_str());
 	int total = DataCut->sumEntries();
@@ -57,22 +56,25 @@ void create_histograms()
 	CreateHistogram::Histogram1D(*DataCut, outFile, "Theta",    Theta, true);
 	CreateHistogram::Histogram1D(*DataCut, outFile, "Phi",      Phi,   true);
 	CreateHistogram::Histogram1D(*DataCut, outFile, "CosTheta", CosTheta, true);
-	CreateHistogram::Histogram1D(*DataCut, outFile, "Eta",      Eta, -6, 6);
+	CreateHistogram::Histogram1DRanged(*DataCut, outFile, "Eta",      Eta, -6., 6.);
 	CreateHistogram::Histogram1D(*DataCut, outFile, "Momentum", Momentum);
 	CreateHistogram::Histogram1D(*DataCut, outFile, "Pt",       Pt);
-	CreateHistogram::Histogram2D(*DataCut, outFile, "XY", PositionX, -2, 2, 50, PositionY, -2, 2, 50);
-	CreateHistogram::Histogram2D(*DataCut, outFile, "ZY", PositionZ, -1, 1, 50, PositionY, -4, 4, 50);
+	CreateHistogram::Histogram2DRanged(*DataCut, outFile, "XY", PositionX, -2, 2, 50, PositionY, -2, 2, 50);
+	CreateHistogram::Histogram2DRanged(*DataCut, outFile, "ZY", PositionZ, -1, 1, 50, PositionY, -4, 4, 50);
 	CreateHistogram::Histogram2D(*DataCut, outFile, "ThetaPhi", Theta, 50, Phi, 50, true);
 	CreateHistogram::Histogram2D(*DataCut, outFile, "PtP", Pt, 50, Momentum, 50);
-	CreateHistogram::Histogram2D(*DataCut, outFile, "PtEta", Pt, 0, 90, 50, Eta, -6, 6, 50);
+	CreateHistogram::Histogram2DRanged(*DataCut, outFile, "PtEta", Pt, 0, 90, 50, Eta, -6, 6, 50);
 
 	delete DataCut;
 
 	// Get particles ID
-	RooDataSet* DataTreeID = new RooDataSet("data", "data", DataTree, RooArgSet(ParticleID, RegionID), "RegionID==0");
+	RooDataSet* DataTreeID = new RooDataSet("data", "data", DataTree, RooArgSet(ParticleID));
 	double minId, maxId;
 	DataTreeID->getRange(ParticleID, minId, maxId);
-	CreateHistogram::Histogram1D(*DataTreeID, outFile, "ParticleID", ParticleID, minId+0.5, maxId+0.5, maxId-minId);
+	int nBins = maxId-minId;
+	if (nBins > 200) nBins = 200;
+	CreateHistogram::Histogram1DRanged(*DataTreeID, outFile, "ParticleID", ParticleID, minId, maxId, nBins);
+	CreateHistogram::Histogram1DRanged(*DataTreeID, outFile, "ParticleIDMain", ParticleID, -25, 25, 50);
 	delete DataTreeID;
 
 	cout << "File created \n";
