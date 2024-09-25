@@ -204,7 +204,8 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 
 	float minStep  = 0.02/1000*mm;
 	G4cout << "The minimal step in integral is equal to " << G4BestUnit(minStep, "Length") << G4endl;
-	auto intgrDriver = new G4IntegrationDriver<G4ClassicalRK4>(minStep, stepper, stepper->GetNumberOfVariables());
+	//auto intgrDriver = new G4IntegrationDriver<G4ClassicalRK4>(minStep, stepper, stepper->GetNumberOfVariables());
+	auto intgrDriver = new G4MagInt_Driver(minStep, stepper, stepper->GetNumberOfVariables());
 	auto chordFinder = new G4ChordFinder(intgrDriver);
 	chordFinder->SetDeltaChord(minStep);
 	fieldManager->SetChordFinder(chordFinder);

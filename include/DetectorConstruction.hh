@@ -19,6 +19,8 @@
 #include <G4TransportationManager.hh>
 #include <G4EqMagElectricField.hh>
 #include <G4ClassicalRK4.hh>
+
+#include <G4MagIntegratorDriver.hh>
 #include <G4ChordFinder.hh>
 
 class DetectorConstruction : public G4VUserDetectorConstruction
