@@ -7,6 +7,10 @@ PhysicsList::PhysicsList()
 
 	// Most accurate EM models and settings
 	RegisterPhysics(new G4EmStandardPhysics_option4());
+
+	// Hadronic physics
+	RegisterPhysics(new G4HadronPhysicsQGSP_BERT_HP());
+
 	RegisterPhysics(new G4IonElasticPhysics());
 	RegisterPhysics(new G4DecayPhysics());
 	

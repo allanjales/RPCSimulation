@@ -9,6 +9,7 @@
 #include <G4IonElasticPhysics.hh>
 #include <G4DecayPhysics.hh>
 #include <G4StepLimiterPhysics.hh>
+#include <G4HadronPhysicsQGSP_BERT_HP.hh>
 
 class PhysicsList : public G4VModularPhysicsList
 {

@@ -114,6 +114,14 @@ void DetectorConstructionMessenger::SetNewValue(G4UIcommand* command, G4String n
 		{
 			detector->SetGasMaterial(detector->CO2Material);
 		}
+		else if (materialName == "iC4H10")
+		{
+			detector->SetGasMaterial(detector->iC4H10Material);
+		}
+		else if (materialName == "CMSMixture")
+		{
+			detector->SetGasMaterial(detector->CMSMixtureMaterial);
+		}
 		else
 		{
 			auto newMaterial =  G4NistManager::Instance()->FindOrBuildMaterial(materialName);

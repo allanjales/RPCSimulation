@@ -40,6 +40,8 @@ public:
 	G4Material* C2H2F4Material;
 	G4Material* SF6Material;
 	G4Material* CO2Material;
+	G4Material* iC4H10Material;
+	G4Material* CMSMixtureMaterial;
 
 	G4UserLimits* WorldUserLimits;
 	G4UserLimits* BakeliteUserLimits;

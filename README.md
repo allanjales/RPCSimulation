@@ -1,6 +1,5 @@
 # Simulação de uma RPC 
 
-
 Antes de tudo, crie uma pasta chamada `build`:
 ~~~sh
 mkdir build
@@ -27,3 +26,7 @@ Para rodar com tudo e salvar num arquivo log.txt:
 ~~~sh
 ./RPCSimulation run.mac | tee log.txt
 ~~~
+
+## Nota
+
+Os arquivos aqui foram testados com o GEANT4 v11.02.02

@@ -63,6 +63,18 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 	CO2Material->AddElement(C, 1);
 	CO2Material->AddElement(O, 2);
 
+	// iC4H10 Gas
+
+	iC4H10Material = new G4Material("iC4H10", 2.48*kg/m3, 2, kStateGas, 295.*kelvin, 0.00168*bar);
+	iC4H10Material->AddElement(C, 4);
+	iC4H10Material->AddElement(H, 10);
+
+	// CMS Mixture
+	CMSMixtureMaterial = new G4Material("CMSMixture", 4.25*kg/m3, 3, kStateGas, 295.*kelvin, 0.00168*bar);
+	CMSMixtureMaterial->AddMaterial(C2H2F4Material, 95.2*perCent);
+	CMSMixtureMaterial->AddMaterial(iC4H10Material,  4.5*perCent);
+	CMSMixtureMaterial->AddMaterial(SF6Material,     0.3*perCent);
+
 
 	// Aluminium Plate
 
