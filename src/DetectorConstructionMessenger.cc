@@ -1,8 +1,8 @@
 #include "DetectorConstructionMessenger.hh"
 #include "DetectorConstruction.hh"
 
-DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstruction* detector)
-: detector(detector)
+DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstruction* _detector)
+: detector(_detector)
 {
 	stepDir = new G4UIdirectory("/RPCSim/maxStepLength/");
 	stepDir ->SetGuidance("Step control");

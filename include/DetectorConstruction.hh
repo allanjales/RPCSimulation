@@ -49,8 +49,7 @@ public:
 	G4UserLimits* PolyethyleneUserLimits;
 	G4UserLimits* GasUserLimits;
 	G4UserLimits* AluminiumUserLimits;
-
-	DataHandler* dataHandler;
+	
 private:
 	G4LogicalVolume*   WorldLogicalVolume;
 	G4VPhysicalVolume* WorldPhysicalVolume;

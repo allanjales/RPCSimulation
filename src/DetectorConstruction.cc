@@ -4,9 +4,6 @@ DetectorConstruction::DetectorConstruction()
 {
 	detectorConstructionMessenger = new DetectorConstructionMessenger(this);
 
-	dataHandler = new DataHandler();
-	sensitiveDetector = new SensitiveDetector("SensitiveDetector", dataHandler);
-
 	// Step Limiter for each material
 	WorldUserLimits        = new G4UserLimits();
 	PolyethyleneUserLimits = new G4UserLimits();

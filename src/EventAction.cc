@@ -1,7 +1,7 @@
 #include "EventAction.hh"
 
-EventAction::EventAction(RunAction* runAction)
-: printModule(1000), runAction(runAction)
+EventAction::EventAction()
+: printModule(1000)
 {
 	eventMessenger = new EventActionMessenger(this);
 }

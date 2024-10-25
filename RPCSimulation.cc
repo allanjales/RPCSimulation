@@ -8,7 +8,6 @@
 #include "DetectorConstruction.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
-#include "DataHandler.hh"
 
 int main(int argc,char** argv)
 {
@@ -18,14 +17,13 @@ int main(int argc,char** argv)
 	// #else
 	// 	G4RunManager *runManager = new G4RunManager();
 	// #endif
-
 	G4RunManager *runManager = new G4RunManager();
 
 	DetectorConstruction* detector = new DetectorConstruction();
 
 	runManager->SetUserInitialization(detector);
 	runManager->SetUserInitialization(new PhysicsList());
-	runManager->SetUserInitialization(new ActionInitialization(detector));
+	runManager->SetUserInitialization(new ActionInitialization());
 
 	//If there is no argument, creates a interface
 	G4UIExecutive* ui = NULL;

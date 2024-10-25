@@ -1,0 +1,9 @@
+#/run/verbose 2
+#/event/verbose 2
+#/tracking/verbose 2
+
+/run/initialize
+
+/gun/particle mu+
+/RPCSim/event/printModule 1000
+/run/beamOn 10000

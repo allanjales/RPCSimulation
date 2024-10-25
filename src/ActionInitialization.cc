@@ -1,7 +1,6 @@
 #include "ActionInitialization.hh"
 
-ActionInitialization::ActionInitialization(DetectorConstruction* detector)
-: detector(detector)
+ActionInitialization::ActionInitialization()
 {}
 
 ActionInitialization::~ActionInitialization()
@@ -9,18 +8,12 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-	RunAction *runAction = new RunAction(detector, primary);
-	SetUserAction(runAction);
+	SetUserAction(new RunAction);
 }
 
 void ActionInitialization::Build() const
 {
-	PrimaryGeneratorAction* primary = new PrimaryGeneratorAction();
-	SetUserAction(primary);
-
-	RunAction* runAction = new RunAction(detector, primary);
-	SetUserAction(runAction);
-
-	SetUserAction(new EventAction(runAction));
-	SetUserAction(new SteppingAction(detector, primary, runAction));
+	SetUserAction(new PrimaryGeneratorAction);
+	SetUserAction(new RunAction);
+	SetUserAction(new EventAction);
 }

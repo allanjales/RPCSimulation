@@ -6,19 +6,15 @@
 #include "RunAction.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "EventAction.hh"
-#include "SteppingAction.hh"
 
 class ActionInitialization : public G4VUserActionInitialization
 {
 public:
-	ActionInitialization(DetectorConstruction*);;
+	ActionInitialization();
 	~ActionInitialization();
 
 	virtual void Build() const;
 	virtual void BuildForMaster() const;
-private:
-	DetectorConstruction* detector;
-	PrimaryGeneratorAction* primary;
 };
 
 #endif

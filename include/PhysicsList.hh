@@ -1,7 +1,7 @@
 #ifndef PhysicsList_hh
 #define PhysicsList_hh
 
-#include "G4VModularPhysicsList.hh"
+#include <G4VModularPhysicsList.hh>
 
 #include <G4SystemOfUnits.hh>
 #include <G4UnitsTable.hh>
