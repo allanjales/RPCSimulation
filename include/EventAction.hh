@@ -6,6 +6,7 @@
 
 #include <G4Event.hh>
 #include "EventActionMessenger.hh"
+#include "Digitizer.hh"
 
 class EventAction : public G4UserEventAction
 {

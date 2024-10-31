@@ -25,15 +25,6 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 
 	analysisManager->CreateNtuple("DetectedParticles", "DetectedParticles");
 	analysisManager->CreateNtupleIColumn("ParticleID");
-	//analysisManager->CreateNtupleIColumn("TrackID");
-	//analysisManager->CreateNtupleIColumn("EventID");
-	//analysisManager->CreateNtupleIColumn("RegionID");
-
-	// Step
-	//analysisManager->CreateNtupleDColumn("StepLength");
-
-	// Post Step
-	//analysisManager->CreateNtupleDColumn("Time");
 
 	analysisManager->CreateNtupleDColumn("PositionX");
 	analysisManager->CreateNtupleDColumn("PositionY");

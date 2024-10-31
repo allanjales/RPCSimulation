@@ -222,6 +222,8 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 
 void DetectorConstruction::ConstructSensitiveDetector()
 {
+	sensitiveDetector = new SensitiveDetector("GasSD");
+	G4SDManager::GetSDMpointer()->AddNewDetector(sensitiveDetector);
 	GasLogicalVolume->SetSensitiveDetector(sensitiveDetector);
 }
 

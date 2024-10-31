@@ -22,6 +22,7 @@
 
 #include <G4MagIntegratorDriver.hh>
 #include <G4ChordFinder.hh>
+#include <G4SDManager.hh>
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
