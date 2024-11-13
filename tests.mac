@@ -13,4 +13,4 @@
 /RPCSim/gasMaterial CMSMixture
 
 /RPCSim/event/printModule 1000
-/run/beamOn 10000
+/run/beamOn 100

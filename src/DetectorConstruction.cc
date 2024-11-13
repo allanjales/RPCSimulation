@@ -23,8 +23,6 @@ DetectorConstruction::~DetectorConstruction()
 	delete AluminiumUserLimits;
 
 	delete detectorConstructionMessenger;
-
-	delete sensitiveDetector;
 }
 
 G4VPhysicalVolume *DetectorConstruction::Construct()
@@ -222,7 +220,7 @@ void DetectorConstruction::CreateChordFinder(G4FieldManager* fieldManager, G4Ele
 
 void DetectorConstruction::ConstructSensitiveDetector()
 {
-	sensitiveDetector = new SensitiveDetector("GasSD");
+	SensitiveDetector* sensitiveDetector = new SensitiveDetector("GasSD");
 	G4SDManager::GetSDMpointer()->AddNewDetector(sensitiveDetector);
 	GasLogicalVolume->SetSensitiveDetector(sensitiveDetector);
 }

@@ -34,8 +34,6 @@ public:
 	
 	void ConstructSDandField();
 
-	//const G4VPhysicalVolume* GetWorld() {return WorldPhysicalVolume;};
-	//const G4VPhysicalVolume* GetGasRPC() {return GasPhysicalVolume;};
 	void SetGasMaterial(G4Material* material);
 
 	G4Material* C2H2F4Material;
@@ -71,8 +69,6 @@ private:
 	G4VPhysicalVolume* AluminiumPhysicalVolume;
 	
 	DetectorConstructionMessenger* detectorConstructionMessenger;
-
-	SensitiveDetector* sensitiveDetector;
 
 	void ConstructElectricField();
 	void CreateChordFinder(G4FieldManager*, G4ElectricField*);

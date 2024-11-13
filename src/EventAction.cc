@@ -5,7 +5,7 @@ EventAction::EventAction()
 {
 	eventMessenger = new EventActionMessenger(this);
 
-	Digitizer* digitizer = new Digitizer("SiDigitizer");
+	Digitizer* digitizer = new Digitizer("Digitizer");
 	G4DigiManager* digiManager = G4DigiManager::GetDMpointer();
 	digiManager->AddNewModule(digitizer);
 }

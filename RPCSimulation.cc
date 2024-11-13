@@ -9,6 +9,9 @@
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
 
+// For debug only
+#undef G4MULTITHREADED
+
 int main(int argc,char** argv)
 {
 	#ifdef G4MULTITHREADED

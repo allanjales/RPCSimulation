@@ -2,58 +2,47 @@
 #define TrackerHit_hh
 
 #include <G4VHit.hh>
+
 #include <G4ThreeVector.hh>
+#include <G4UnitsTable.hh>
 
 class TrackerHit : public G4VHit
 {
 public:
 	TrackerHit();
 	~TrackerHit();
-	void Print();
+	
+	void Print() override;
+	void Draw() override;
 
-	void SetEdep(G4double edep) { fEdep = edep; }
-	G4double GetEdep() { return fEdep; }
+	void SetTrackerHitParticleID(G4int id) { trackerHitparticleID = id; }
+	G4int GetTrackerHitParticleID() const { return trackerHitparticleID; }
 
-	void SetPosition(G4ThreeVector pos) { fPosition = pos; }
-	G4ThreeVector GetPosition() { return fPosition; }
+	void SetTrackerHitEdep(G4double edep) { trackerHitEdep = edep; }
+	G4double GetTrackerHitEdep() { return trackerHitEdep; }
 
-	void SetParticleID(G4int id) { fParticleID = id; }
-	G4int GetParticleID() const { return fParticleID; }
+	void SetTrackerHitPosition(G4ThreeVector pos) { trackerHitPosition = pos; }
+	G4ThreeVector GetPosition() { return trackerHitPosition; }
 
-	void SetKineticEnergy(G4double kinEnergy) { fKineticEnergy = kinEnergy; }
-	G4double GetKineticEnergy() const { return fKineticEnergy; }
-	void SetTotalEnergy(G4double totalEnergy) { fTotalEnergy = totalEnergy; }
-	G4double GetTotalEnergy() const { return fTotalEnergy; }
+	void SetTrackerHitTime(G4double time) { trackerHitTime = time; }
+	G4double TrackerHitTime() const { return trackerHitTime; }
 
-	void SetTheta(G4double theta) { fTheta = theta; }
-	G4double GetTheta() const { return fTheta; }
-	void SetPhi(G4double phi) { fPhi = phi; }
-	G4double GetPhi() const { return fPhi; }
-	void SetCosTheta(G4double cosTheta) { fCosTheta = cosTheta; }
-	G4double GetCosTheta() const { return fCosTheta; }
-
-	void SetMomentum(G4double momentum) { fMomentum = momentum; }
-	G4double GetMomentum() const { return fMomentum; }
-	void SetPt(G4double pt) { fPt = pt; }
-	G4double GetPt() const { return fPt; }
-	void SetEta(G4double eta) { fEta = eta; }
-	G4double GetEta() const { return fEta; }
+	void SetTrackerHitMomentum(G4ThreeVector momentum) { trackerHitMomentum = momentum; }
+	G4ThreeVector GetTrackerHitMomentum() const { return trackerHitMomentum; }
+	
+	void SetTrackerHitKineticEnergy(G4double kinEnergy) { trackerHitKineticEnergy = kinEnergy; }
+	G4double GetTrackerHitKineticEnergy() const { return trackerHitKineticEnergy; }
 
 private:
-	G4double fEdep {0};
-	G4ThreeVector fPosition {G4ThreeVector(0, 0, 0)};
-	G4int fParticleID {0}; // ID da partícula
-	G4double fKineticEnergy {0};
-	G4double fTotalEnergy {0};
-	G4double fTheta {0};
-	G4double fPhi {0};
-	G4double fCosTheta {0};
-	G4double fMomentum {0};
-	G4double fPt {0};
-	G4double fEta {0};
+	G4int trackerHitparticleID {0};
+	G4double trackerHitEdep {0.};
+	G4ThreeVector trackerHitPosition {G4ThreeVector(0., 0., 0.)};
+	G4double trackerHitTime {0.};
+	G4ThreeVector trackerHitMomentum {G4ThreeVector(0., 0., 0.)};
+	G4double trackerHitKineticEnergy {0.};
 };
 
 #include "G4THitsCollection.hh"
-typedef G4THitsCollection<TrackerHit> TrackerHitsCollection; 
+typedef G4THitsCollection<TrackerHit> TrackerHitsCollection;
 
 #endif

@@ -10,6 +10,7 @@
 #include "TrackerHit.hh"
 #include "Digitizer.hh"
 #include <filesystem>
+#include <G4Electron.hh>
 
 class SensitiveDetector : public G4VSensitiveDetector
 {
@@ -21,22 +22,9 @@ private:
 	void Initialize(G4HCofThisEvent*);
 	void EndOfEvent(G4HCofThisEvent*);
 
-	void FillData(const G4Step*);
+	void InsertAtTrackerHC(const G4Step*);
 
-	TrackerHitsCollection* fHitCollection;
-
-	// Temporary variables
-	G4double fEdep;
-    G4double fPosX, fPosY, fPosZ;
-	G4int fParticleID;
-	G4double fKineticEnergy;
-	G4double fTotalEnergy;
-	G4double fTheta;
-	G4double fPhi;
-	G4double fCosTheta;
-	G4double fMomentum;
-	G4double fPt;
-	G4double fEta;
+	TrackerHitsCollection* trackerHitsCollection = nullptr;
 };
 
 #endif

@@ -8,3 +8,6 @@ TrackerDigi::~TrackerDigi()
 
 void TrackerDigi::Print()
 {}
+
+void TrackerDigi::Draw()
+{}

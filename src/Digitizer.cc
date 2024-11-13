@@ -17,12 +17,13 @@ void Digitizer::Digitize()
 	//StoreDigiCollection(digiCollection);
 
     // Cria uma nova coleção de Digis
+	/*
     fDigiCollection = new TrackerDigiCollection(GetName(), collectionName[0]);
 
 
     // Obtém a coleção de hits
     G4DigiManager* digiManager = G4DigiManager::GetDMpointer();
-    G4int hitCollectionID = digiManager->GetHitsCollectionID("TrackerHitCollection");
+    G4int hitCollectionID = digiManager->GetHitsCollectionID("TrackerHitsCollection");
     const TrackerHitsCollection* hitsCollection(static_cast<const TrackerHitsCollection*>(digiManager->GetHitsCollection(hitCollectionID)));
 
     if (hitsCollection)
@@ -40,4 +41,5 @@ void Digitizer::Digitize()
     }
 	
     StoreDigiCollection(fDigiCollection);
+	*/
 }
