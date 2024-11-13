@@ -10,36 +10,50 @@ Digitizer::~Digitizer()
 
 void Digitizer::Digitize()
 {
-	//TrackerDigiCollection* digiCollection = new TrackerDigiCollection(GetName(), collectionName[0]);
-	//TrackerDigi* aDigi = new TrackerDigi();
-	//digiCollection->insert(aDigi);
+	// Create digi collection
+	trackerDigiCollection = new TrackerDigiCollection(GetName(), collectionName[0]);
 
-	//StoreDigiCollection(digiCollection);
+	// Get hits collection 
+	G4DigiManager* digiManager = G4DigiManager::GetDMpointer();
+	G4int hitCollectionID = digiManager->GetHitsCollectionID("TrackerHitsCollection");
+	const TrackerHitsCollection* trackerHitsCollection(static_cast<const TrackerHitsCollection*>(digiManager->GetHitsCollection(hitCollectionID)));
 
-    // Cria uma nova coleção de Digis
-	/*
-    fDigiCollection = new TrackerDigiCollection(GetName(), collectionName[0]);
+	if (trackerHitsCollection)
+	{
+		for (size_t i = 0; i < trackerHitsCollection->entries(); i++)
+		{
+			TrackerHit* aHit = (*trackerHitsCollection)[i];
+			TrackerDigi* aDigi = new TrackerDigi();
 
+			aDigi->SetTrackerDigiEdep(aHit->GetTrackerHitEdep());
+			aDigi->SetTrackerDigiPosition(aHit->GetTrackerHitPosition());
+			aDigi->SetTrackerDigiTime(aHit->GetTrackerHitTime());
 
-    // Obtém a coleção de hits
-    G4DigiManager* digiManager = G4DigiManager::GetDMpointer();
-    G4int hitCollectionID = digiManager->GetHitsCollectionID("TrackerHitsCollection");
-    const TrackerHitsCollection* hitsCollection(static_cast<const TrackerHitsCollection*>(digiManager->GetHitsCollection(hitCollectionID)));
+			trackerDigiCollection->insert(aDigi);
+		}
+	}
 
-    if (hitsCollection)
-    {
-        for (size_t i = 0; i < hitsCollection->entries(); i++)
-        {
-            TrackerHit* hit = (*hitsCollection)[i];
-            
-            TrackerDigi* digi = new TrackerDigi();
-            digi->SetEdep(hit->GetEdep());
-            digi->SetPosition(hit->GetPosition());
+	StoreDigiCollection(trackerDigiCollection);
+}
 
-            fDigiCollection->insert(digi);
-        }
-    }
+void Digitizer::FillTrackerDigiNtuple()
+{
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+
+	TrackerDigi* aDigi;
+	int i = 0;
 	
-    StoreDigiCollection(fDigiCollection);
-	*/
+	for (size_t j = 0; j < trackerDigiCollection->entries(); j++)
+	{
+		aDigi = (*trackerDigiCollection)[j];
+		i = 0;
+
+		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiEdep());
+		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiPosition().x());
+		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiPosition().y());
+		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiPosition().z());
+		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiTime());
+
+		analysisManager->AddNtupleRow();
+	}
 }

@@ -4,6 +4,7 @@ SensitiveDetector::SensitiveDetector(G4String name)
 : G4VSensitiveDetector(name)
 {
 	collectionName.insert("TrackerHitsCollection");
+	collectionName.insert("ElectronFirstHitsCollection");
 }
 
 SensitiveDetector::~SensitiveDetector()
@@ -12,58 +13,35 @@ SensitiveDetector::~SensitiveDetector()
 G4bool SensitiveDetector::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhist*/)
 {
 	InsertAtTrackerHC(aStep);
+
+	G4Track* aTrack = aStep->GetTrack();
+	if (aTrack->GetDefinition() == G4Electron::ElectronDefinition())
+		InsertAtElectronFirstHC(aStep);
+
 	return true;
 }
 
 void SensitiveDetector::Initialize(G4HCofThisEvent* hce)
 {
 	trackerHitsCollection = new TrackerHitsCollection(SensitiveDetectorName, collectionName[0]);
-
 	G4int hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
 	hce->AddHitsCollection(hcID, trackerHitsCollection);
+
+	electronFirstHitsCollection = new ElectronFirstHitsCollection(SensitiveDetectorName, collectionName[1]);
+	hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[1]);
+	hce->AddHitsCollection(hcID, electronFirstHitsCollection);
 }
 
 void SensitiveDetector::EndOfEvent(G4HCofThisEvent* /*hce*/)
 {
-	/*
-	G4int HCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
-	fHitCollection = static_cast<TrackerHitsCollection*>(HCE->GetHC(HCID));
-
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-
-	int i = 0;
-	for (size_t j = 0; j < fHitCollection->entries(); j++)
-	{
-		TrackerHit* hit = (*fHitCollection)[j];
-
-		i = 0;
-		analysisManager->FillNtupleIColumn(i++, hit->GetParticleID());
-		
-		analysisManager->FillNtupleDColumn(i++, hit->GetPosition().x());
-		analysisManager->FillNtupleDColumn(i++, hit->GetPosition().y());
-		analysisManager->FillNtupleDColumn(i++, hit->GetPosition().z());
-
-		analysisManager->FillNtupleDColumn(i++, hit->GetKineticEnergy());
-		analysisManager->FillNtupleDColumn(i++, hit->GetTotalEnergy());
-		analysisManager->FillNtupleDColumn(i++, hit->GetTheta());
-		analysisManager->FillNtupleDColumn(i++, hit->GetPhi());
-		analysisManager->FillNtupleDColumn(i++, hit->GetMomentum());
-
-		analysisManager->FillNtupleDColumn(i++, hit->GetPt());
-		analysisManager->FillNtupleDColumn(i++, hit->GetEta());
-		analysisManager->FillNtupleDColumn(i++, hit->GetCosTheta());
-
-		analysisManager->AddNtupleRow();
-	}
-	*/
+	FillTrackerHitNtuple();
+	FillElectronFirstHitNtuple();
 }
 
 void SensitiveDetector::InsertAtTrackerHC(const G4Step* aStep)
 {
-	TrackerHit* aHit = new TrackerHit();
-
 	G4Track* aTrack = aStep->GetTrack();
-	G4ThreeVector momentum = aTrack->GetMomentum();
+	TrackerHit* aHit = new TrackerHit();
 
 	aHit->SetTrackerHitParticleID(aTrack->GetDefinition()->GetPDGEncoding());
 	aHit->SetTrackerHitEdep(aStep->GetTotalEnergyDeposit());
@@ -73,4 +51,75 @@ void SensitiveDetector::InsertAtTrackerHC(const G4Step* aStep)
 	aHit->SetTrackerHitTime(aTrack->GetGlobalTime());
 
 	trackerHitsCollection->insert(aHit);
+}
+
+void SensitiveDetector::InsertAtElectronFirstHC(const G4Step* aStep)
+{
+	G4Track* aTrack = aStep->GetTrack();
+	ElectronFirstHit* aHit = new ElectronFirstHit();
+	
+	aHit->SetElectronFirstHitPosition(aTrack->GetPosition());
+	aHit->SetElectronFirstHitMomentum(aTrack->GetMomentum());
+	aHit->SetElectronFirstHitKineticEnergy(aTrack->GetKineticEnergy());
+	aHit->SetElectronFirstHitTime(aTrack->GetGlobalTime());
+
+	electronFirstHitsCollection->insert(aHit);
+}
+
+void SensitiveDetector::FillTrackerHitNtuple()
+{
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	size_t trackerHCEntries = trackerHitsCollection->entries();
+
+	if (trackerHCEntries == 0)
+		return;
+	
+	TrackerHit* aHit;
+	int i = 0;
+	for (size_t j = 0; j < trackerHCEntries; j++)
+	{
+		aHit = (*trackerHitsCollection)[j];
+		i = 0;
+
+		analysisManager->FillNtupleIColumn(0, i++, aHit->GetTrackerHitParticleID());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitEdep());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitPosition().x());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitPosition().y());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitPosition().z());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitTime());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitMomentum().x());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitMomentum().y());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitMomentum().z());
+		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitKineticEnergy());
+
+		analysisManager->AddNtupleRow();
+	}
+}
+
+void SensitiveDetector::FillElectronFirstHitNtuple()
+{
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	size_t ElectronFirstHitHCEntries = electronFirstHitsCollection->entries();
+
+	if (ElectronFirstHitHCEntries == 0)
+		return;
+	
+	ElectronFirstHit* aHit;
+	int i = 0;
+	for (size_t j = 0; j < ElectronFirstHitHCEntries; j++)
+	{
+		aHit = (*electronFirstHitsCollection)[j];
+		i = 0;
+
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitPosition().x());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitPosition().y());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitPosition().z());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitTime());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitMomentum().x());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitMomentum().y());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitMomentum().z());
+		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitKineticEnergy());
+
+		analysisManager->AddNtupleRow();
+	}
 }

@@ -7,10 +7,12 @@
 #include <G4RunManager.hh>
 #include <G4THitsCollection.hh>
 #include <G4SDManager.hh>
-#include "TrackerHit.hh"
-#include "Digitizer.hh"
 #include <filesystem>
 #include <G4Electron.hh>
+
+#include "TrackerHit.hh"
+#include "Digitizer.hh"
+#include "ElectronFirstHit.hh"
 
 class SensitiveDetector : public G4VSensitiveDetector
 {
@@ -23,8 +25,15 @@ private:
 	void EndOfEvent(G4HCofThisEvent*);
 
 	void InsertAtTrackerHC(const G4Step*);
+	void InsertAtElectronFirstHC(const G4Step*);
 
-	TrackerHitsCollection* trackerHitsCollection = nullptr;
+	void FillTrackerHitNtuple();
+	void FillElectronFirstHitNtuple();
+
+	TrackerHitsCollection* trackerHitsCollection;
+	ElectronFirstHitsCollection* electronFirstHitsCollection;
+
+	std::set<G4int> ignoredTrackIDsForElectronsFirstHC;
 };
 
 #endif

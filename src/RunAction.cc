@@ -23,23 +23,36 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	std::filesystem::create_directories("./results/");
 	analysisManager->OpenFile("results/output.root");
 
-	analysisManager->CreateNtuple("DetectedParticles", "DetectedParticles");
-	analysisManager->CreateNtupleIColumn("ParticleID");
+	analysisManager->CreateNtuple("TrackerHits", "TrackerHits");
+	analysisManager->CreateNtupleIColumn(0, "ParticleID");
+	analysisManager->CreateNtupleDColumn(0, "Edep");
+	analysisManager->CreateNtupleDColumn(0, "PositionX");
+	analysisManager->CreateNtupleDColumn(0, "PositionY");
+	analysisManager->CreateNtupleDColumn(0, "PositionZ");
+	analysisManager->CreateNtupleDColumn(0, "Time");
+	analysisManager->CreateNtupleDColumn(0, "MomentumX");
+	analysisManager->CreateNtupleDColumn(0, "MomentumY");
+	analysisManager->CreateNtupleDColumn(0, "MomentumZ");
+	analysisManager->CreateNtupleDColumn(0, "KinectEnergy");
+	analysisManager->FinishNtuple();
 
-	analysisManager->CreateNtupleDColumn("PositionX");
-	analysisManager->CreateNtupleDColumn("PositionY");
-	analysisManager->CreateNtupleDColumn("PositionZ");
+	analysisManager->CreateNtuple("TrackerDigi", "TrackerDigi");
+	analysisManager->CreateNtupleDColumn(1, "Edep");
+	analysisManager->CreateNtupleDColumn(1, "PositionX");
+	analysisManager->CreateNtupleDColumn(1, "PositionY");
+	analysisManager->CreateNtupleDColumn(1, "PositionZ");
+	analysisManager->CreateNtupleDColumn(1, "Time");
+	analysisManager->FinishNtuple();
 
-	analysisManager->CreateNtupleDColumn("KinectEnergy");
-	analysisManager->CreateNtupleDColumn("TotalEnergy");
-	analysisManager->CreateNtupleDColumn("Theta");
-	analysisManager->CreateNtupleDColumn("Phi");
-	analysisManager->CreateNtupleDColumn("Momentum");
-
-	analysisManager->CreateNtupleDColumn("Pt");
-	analysisManager->CreateNtupleDColumn("Eta");
-	analysisManager->CreateNtupleDColumn("CosTheta");
-
+	analysisManager->CreateNtuple("ElectronFirstHits", "ElectronFirstHits");
+	analysisManager->CreateNtupleDColumn(2, "PositionX");
+	analysisManager->CreateNtupleDColumn(2, "PositionY");
+	analysisManager->CreateNtupleDColumn(2, "PositionZ");
+	analysisManager->CreateNtupleDColumn(2, "Time");
+	analysisManager->CreateNtupleDColumn(2, "MomentumX");
+	analysisManager->CreateNtupleDColumn(2, "MomentumY");
+	analysisManager->CreateNtupleDColumn(2, "MomentumZ");
+	analysisManager->CreateNtupleDColumn(2, "KinectEnergy");
 	analysisManager->FinishNtuple();
 
 	runStartedTime = time(0);

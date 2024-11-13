@@ -28,4 +28,5 @@ void EventAction::EndOfEventAction(const G4Event*)
 	G4DigiManager * digiManager = G4DigiManager::GetDMpointer();
 	Digitizer* digiModule = static_cast<Digitizer*>(digiManager->FindDigitizerModule("Digitizer"));
 	digiModule->Digitize();
+	digiModule->FillTrackerDigiNtuple();
 }
