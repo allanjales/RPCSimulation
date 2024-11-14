@@ -34,7 +34,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	analysisManager->CreateNtupleDColumn(0, "MomentumY");
 	analysisManager->CreateNtupleDColumn(0, "MomentumZ");
 	analysisManager->CreateNtupleDColumn(0, "KinectEnergy");
-	analysisManager->FinishNtuple();
+	analysisManager->FinishNtuple(0);
 
 	analysisManager->CreateNtuple("TrackerDigi", "TrackerDigi");
 	analysisManager->CreateNtupleDColumn(1, "Edep");
@@ -42,7 +42,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	analysisManager->CreateNtupleDColumn(1, "PositionY");
 	analysisManager->CreateNtupleDColumn(1, "PositionZ");
 	analysisManager->CreateNtupleDColumn(1, "Time");
-	analysisManager->FinishNtuple();
+	analysisManager->FinishNtuple(1);
 
 	analysisManager->CreateNtuple("ElectronFirstHits", "ElectronFirstHits");
 	analysisManager->CreateNtupleDColumn(2, "PositionX");
@@ -53,7 +53,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	analysisManager->CreateNtupleDColumn(2, "MomentumY");
 	analysisManager->CreateNtupleDColumn(2, "MomentumZ");
 	analysisManager->CreateNtupleDColumn(2, "KinectEnergy");
-	analysisManager->FinishNtuple();
+	analysisManager->FinishNtuple(2);
 
 	runStartedTime = time(0);
 }

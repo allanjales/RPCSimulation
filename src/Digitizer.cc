@@ -23,6 +23,10 @@ void Digitizer::Digitize()
 		for (size_t i = 0; i < trackerHitsCollection->entries(); i++)
 		{
 			TrackerHit* aHit = (*trackerHitsCollection)[i];
+
+			if (aHit->GetTrackerHitEdep() == 0.)
+				continue;
+
 			TrackerDigi* aDigi = new TrackerDigi();
 
 			aDigi->SetTrackerDigiEdep(aHit->GetTrackerHitEdep());
@@ -45,6 +49,7 @@ void Digitizer::FillTrackerDigiNtuple()
 	
 	for (size_t j = 0; j < trackerDigiCollection->entries(); j++)
 	{
+		
 		aDigi = (*trackerDigiCollection)[j];
 		i = 0;
 
@@ -54,6 +59,6 @@ void Digitizer::FillTrackerDigiNtuple()
 		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiPosition().z());
 		analysisManager->FillNtupleDColumn(1, i++, aDigi->GetTrackerDigiTime());
 
-		analysisManager->AddNtupleRow();
+		analysisManager->AddNtupleRow(1);
 	}
 }

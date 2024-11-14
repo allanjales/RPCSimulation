@@ -33,7 +33,10 @@ private:
 	TrackerHitsCollection* trackerHitsCollection;
 	ElectronFirstHitsCollection* electronFirstHitsCollection;
 
-	std::set<G4int> ignoredTrackIDsForElectronsFirstHC;
+	/// @brief Ignored track IDs that have already been processed by Electron First Hits
+	std::set<G4int> ignoredTrackIDs;
+	bool ShouldIgnoreTrackID(int trackID) { return ignoredTrackIDs.find(trackID) != ignoredTrackIDs.end(); }
+	void IgnoreTrackID(int trackID) { ignoredTrackIDs.insert(trackID); }
 };
 
 #endif

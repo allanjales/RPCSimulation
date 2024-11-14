@@ -15,8 +15,20 @@ G4bool SensitiveDetector::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhis
 	InsertAtTrackerHC(aStep);
 
 	G4Track* aTrack = aStep->GetTrack();
-	if (aTrack->GetDefinition() == G4Electron::ElectronDefinition())
-		InsertAtElectronFirstHC(aStep);
+	G4int trackID = aTrack->GetTrackID();
+	
+	if (ShouldIgnoreTrackID(trackID))
+	 	return true;
+
+	G4int parentID = aTrack->GetParentID();
+	if (ShouldIgnoreTrackID(parentID))
+		IgnoreTrackID(trackID);
+
+	if (aTrack->GetDefinition() != G4Electron::ElectronDefinition())
+		return true;
+
+	InsertAtElectronFirstHC(aStep);
+	IgnoreTrackID(trackID);
 
 	return true;
 }
@@ -30,6 +42,8 @@ void SensitiveDetector::Initialize(G4HCofThisEvent* hce)
 	electronFirstHitsCollection = new ElectronFirstHitsCollection(SensitiveDetectorName, collectionName[1]);
 	hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[1]);
 	hce->AddHitsCollection(hcID, electronFirstHitsCollection);
+
+	ignoredTrackIDs.clear();
 }
 
 void SensitiveDetector::EndOfEvent(G4HCofThisEvent* /*hce*/)
@@ -92,7 +106,7 @@ void SensitiveDetector::FillTrackerHitNtuple()
 		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitMomentum().z());
 		analysisManager->FillNtupleDColumn(0, i++, aHit->GetTrackerHitKineticEnergy());
 
-		analysisManager->AddNtupleRow();
+		analysisManager->AddNtupleRow(0);
 	}
 }
 
@@ -103,6 +117,7 @@ void SensitiveDetector::FillElectronFirstHitNtuple()
 
 	if (ElectronFirstHitHCEntries == 0)
 		return;
+	G4cout << "ElectronFirstHitHCEntries: " << ElectronFirstHitHCEntries << G4endl;
 	
 	ElectronFirstHit* aHit;
 	int i = 0;
@@ -120,6 +135,6 @@ void SensitiveDetector::FillElectronFirstHitNtuple()
 		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitMomentum().z());
 		analysisManager->FillNtupleDColumn(2, i++, aHit->GetElectronFirstHitKineticEnergy());
 
-		analysisManager->AddNtupleRow();
+		analysisManager->AddNtupleRow(2);
 	}
 }
