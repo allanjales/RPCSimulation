@@ -5,6 +5,8 @@ RunAction::RunAction()
 	// Random seed
 	// G4Random::setTheSeed(time(0));
 	G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+
+	Book();
 }
 
 RunAction::~RunAction()
@@ -12,16 +14,42 @@ RunAction::~RunAction()
 
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-	
-	G4cout << "\n--------------\n";
-	G4cout << "Run " << aRun->GetRunID() << " start\n";
-	G4cout << "Seed: " << G4Random::getTheSeed() << "\n\n";
+	G4cout
+		<< "> --------------\n"
+		<< "> Run " << aRun->GetRunID() << " start\n"
+		<< "> Seed: " << G4Random::getTheSeed() << "\n"
+		<< "> --------------\n"
+		<< G4endl;
 
-	// std::stringstream strRunID;
-	// strRunID << aRun->GetRunID();
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 	std::filesystem::create_directories("./results/");
 	analysisManager->OpenFile("results/output.root");
+
+	runStartedTime = time(0);
+}
+
+void RunAction::EndOfRunAction(const G4Run* aRun)
+{
+	double elapsedtime = (time(0) - runStartedTime) * s;
+	G4cout << "\nRun " << aRun->GetRunID() << " ended within " << G4BestUnit(elapsedtime, "Time") << "\n";
+
+	//if has not been any event, do not save histograms
+	if (aRun->GetNumberOfEvent() == 0)
+		return;
+
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	analysisManager->Write();
+	analysisManager->CloseFile();
+
+	G4Random::showEngineStatus();
+}
+
+void RunAction::Book()
+{
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	
+	if (G4Threading::IsMultithreadedApplication())
+		analysisManager->SetNtupleMerging(true);
 
 	analysisManager->CreateNtuple("TrackerHits", "TrackerHits");
 	analysisManager->CreateNtupleIColumn(0, "ParticleID");
@@ -54,31 +82,4 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	analysisManager->CreateNtupleDColumn(2, "MomentumZ");
 	analysisManager->CreateNtupleDColumn(2, "KinectEnergy");
 	analysisManager->FinishNtuple(2);
-
-	runStartedTime = time(0);
-}
-
-void RunAction::EndOfRunAction(const G4Run* aRun)
-{
-	/*
-	G4cout.precision(5);
-	G4ParticleDefinition* particle = primary->GetParticleGun()->GetParticleDefinition();
-	G4double energy = primary->GetParticleGun()->GetParticleEnergy();
-	G4cout << "\nThe run consists of " << aRun->GetNumberOfEvent() << " "
-		<< particle->GetParticleName() << " of " << G4BestUnit(energy,"Energy") << " through\n";
-	*/
-
-	double elapsedtime = (time(0) - runStartedTime) * s;
-	G4cout << "\nRun " << aRun->GetRunID() << " ended within " << G4BestUnit(elapsedtime, "Time") << "\n";
-	G4cout << "--------------\n";
-
-	//if has not been any event, do not save histograms
-	if (aRun->GetNumberOfEvent() == 0)
-		return;
-
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	analysisManager->Write();
-	analysisManager->CloseFile();
-
-	G4Random::showEngineStatus();
 }

@@ -22,6 +22,9 @@ class RunAction : public G4UserRunAction
 		
 	private:
 		int runStartedTime;
+
+		/// @brief Open the output file and create the ntuple
+		void Book();
 	};
 
 #endif

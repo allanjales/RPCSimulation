@@ -2,9 +2,11 @@
 #define ElectronFirstHit_hh
 
 #include <G4VHit.hh>
-
 #include <G4ThreeVector.hh>
 #include <G4UnitsTable.hh>
+#include <G4VVisManager.hh>
+#include <G4Circle.hh>
+#include <G4VisAttributes.hh>
 
 class ElectronFirstHit : public G4VHit
 {

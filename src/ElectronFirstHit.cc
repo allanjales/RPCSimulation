@@ -22,15 +22,16 @@ void ElectronFirstHit::Print()
 
 void ElectronFirstHit::Draw()
 {
-	// G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
-	// if(pVVisManager)
-	// {
-	// 	G4Circle circle(fPos);
-	// 	circle.SetScreenSize(4.);
-	// 	circle.SetFillStyle(G4Circle::filled);
-	// 	G4Colour colour(1.,0.,0.);
-	// 	G4VisAttributes attribs(colour);
-	// 	circle.SetVisAttributes(attribs);
-	// 	pVVisManager->Draw(circle);
-	// }
+	G4VVisManager* visManager = G4VVisManager::GetConcreteInstance();
+	if (!visManager)
+		return;
+	
+	G4Circle circle(ElectronFirstHitPosition);
+	circle.SetScreenSize(4.);
+	circle.SetFillStyle(G4Circle::filled);
+	G4Colour colour(.9, .5, .2);
+	//G4Colour colour(.4, .7, .3);
+	G4VisAttributes attributes(colour);
+	circle.SetVisAttributes(attributes);
+	visManager->Draw(circle);
 }
