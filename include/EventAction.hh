@@ -17,10 +17,10 @@ public:
 	void BeginOfEventAction(const G4Event* event) override;
 	void EndOfEventAction(const G4Event* event) override;
 
-	void SetPrintModule(G4int val) {printModule = val;}
+	void SetPrintModulo(G4int val) {printModulo = val;}
 
 private:
-	G4int                 printModule;
+	G4int                 printModulo;
 	EventActionMessenger* eventMessenger;
 };
 

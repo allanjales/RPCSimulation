@@ -1,19 +1,36 @@
-#ifndef HISTOGRAMCONTROL_HH
-#define HISTOGRAMCONTROL_HH
+#ifndef HistogramsControl_HH
+#define HistogramsControl_HH
 
 #include <TH1.h>
 #include <TH2.h>
 #include <TH3.h>
 #include <TCanvas.h>
 #include <TPaletteAxis.h>
-
+#include <filesystem>
 #include <ostream>
 using namespace std;
 
-class HistogramControl
+class HistogramsControl
 {
+private:
+	string savePath {"plots/"};
+	string saveExtension {".png"};
+
+	void CreateDirectory()
+	{
+		if (!std::filesystem::exists(savePath))
+			std::filesystem::create_directory(savePath);
+	}
+
 public:
-	void static DrawAndSave1D(TH1& h, Option_t* option = "", string logInAxes = "", bool showStats = false)
+	HistogramsControl() {}
+	HistogramsControl(string path, string extension) {savePath = path; saveExtension = extension;}
+	~HistogramsControl() {}
+
+	void SetSavePath(string path) {savePath = path;}
+	void SetSaveExtension(string extension) {saveExtension = extension;}
+
+	void DrawAndSave1D(TH1& h, Option_t* option = "", string logInAxes = "", bool showStats = false)
 	{
 		TCanvas c1("c1", "c1", 600, 600);
 		c1.SetLeftMargin(0.1);
@@ -29,10 +46,12 @@ public:
 		
 		h.Draw(option);
 		h.Write();
-		c1.SaveAs(("plots/" + string(h.GetName()) + ".png").c_str());
+
+		CreateDirectory();
+		c1.SaveAs((savePath + string(h.GetName()) + saveExtension).c_str());
 	}
 
-	void static DrawAndSave2D(TH2& h, Option_t* option = "", string logInAxes = "", bool showStats = false)
+	void DrawAndSave2D(TH2& h, Option_t* option = "", string logInAxes = "", bool showStats = false)
 	{
 		TCanvas c1("c1", "c1", 600, 600);
 		c1.SetRightMargin(0.15);
@@ -61,10 +80,11 @@ public:
 		}
 
 		h.Write();
-		c1.SaveAs(("plots/" + string(h.GetName()) + ".png").c_str());
+		CreateDirectory();
+		c1.SaveAs((savePath + string(h.GetName()) + saveExtension).c_str());
 	}
 
-	void static DrawAndSave3D(TH3& h, Option_t* option = "")
+	void DrawAndSave3D(TH3& h, Option_t* option = "")
 	{
 		TCanvas c1("c1", "c1", 800, 800);
 
@@ -90,7 +110,8 @@ public:
 		gPad->SetPhi(30+180);
 
 		h.Write();
-		c1.SaveAs(("plots/" + string(h.GetName()) + ".png").c_str());
+		CreateDirectory();
+		c1.SaveAs((savePath + string(h.GetName()) + saveExtension).c_str());
 	}
 };
 

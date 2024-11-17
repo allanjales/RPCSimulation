@@ -1,7 +1,7 @@
 #include "EventAction.hh"
 
 EventAction::EventAction()
-: printModule(1000)
+: printModulo(1000)
 {
 	eventMessenger = new EventActionMessenger(this);
 
@@ -19,7 +19,7 @@ void EventAction::BeginOfEventAction(const G4Event* event)
 {
 	G4int eventNumber = event->GetEventID();	
 
-	if (eventNumber % printModule == 0)
+	if (eventNumber % printModulo == 0)
 		G4cout << "-> Begin of Event: " << eventNumber << G4endl;
 }
 

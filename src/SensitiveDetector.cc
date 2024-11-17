@@ -117,7 +117,6 @@ void SensitiveDetector::FillElectronFirstHitNtuple()
 
 	if (ElectronFirstHitHCEntries == 0)
 		return;
-	G4cout << "ElectronFirstHitHCEntries: " << ElectronFirstHitHCEntries << G4endl;
 	
 	ElectronFirstHit* aHit;
 	int i = 0;
