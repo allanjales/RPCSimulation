@@ -10,19 +10,22 @@ SensitiveDetector::SensitiveDetector(G4String name)
 SensitiveDetector::~SensitiveDetector()
 {}
 
-G4bool SensitiveDetector::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhist*/)
+G4bool SensitiveDetector::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-	InsertAtTrackerHC(aStep);
-
 	G4Track* aTrack = aStep->GetTrack();
+	if (aTrack->GetTotalEnergy() > 0)
+		InsertAtTrackerHC(aStep);
+
 	G4int trackID = aTrack->GetTrackID();
-	
 	if (ShouldIgnoreTrackID(trackID))
 	 	return true;
 
 	G4int parentID = aTrack->GetParentID();
 	if (ShouldIgnoreTrackID(parentID))
+	{
 		IgnoreTrackID(trackID);
+		return true;
+	}
 
 	if (aTrack->GetDefinition() != G4Electron::ElectronDefinition())
 		return true;

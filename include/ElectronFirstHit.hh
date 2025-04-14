@@ -22,7 +22,7 @@ public:
 	void SetElectronFirstHitMomentum(G4ThreeVector momentum) { ElectronFirstHitMomentum = momentum; }
 	void SetElectronFirstHitKineticEnergy(G4double kinEnergy) { ElectronFirstHitKineticEnergy = kinEnergy; }
 
-	G4ThreeVector GetElectronFirstHitPosition() { return ElectronFirstHitPosition; }
+	G4ThreeVector GetElectronFirstHitPosition() const { return ElectronFirstHitPosition; }
 	G4double      GetElectronFirstHitTime() const { return ElectronFirstHitTime; }
 	G4ThreeVector GetElectronFirstHitMomentum() const { return ElectronFirstHitMomentum; }
 	G4double      GetElectronFirstHitKineticEnergy() const { return ElectronFirstHitKineticEnergy; }

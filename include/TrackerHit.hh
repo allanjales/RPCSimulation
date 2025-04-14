@@ -23,8 +23,8 @@ public:
 	void SetTrackerHitKineticEnergy(G4double kinEnergy) { trackerHitKineticEnergy = kinEnergy; }
 
 	G4int         GetTrackerHitParticleID() const { return trackerHitparticleID; }
-	G4double      GetTrackerHitEdep() { return trackerHitEdep; }
-	G4ThreeVector GetTrackerHitPosition() { return trackerHitPosition; }
+	G4double      GetTrackerHitEdep() const { return trackerHitEdep; }
+	G4ThreeVector GetTrackerHitPosition() const { return trackerHitPosition; }
 	G4double      GetTrackerHitTime() const { return trackerHitTime; }
 	G4ThreeVector GetTrackerHitMomentum() const { return trackerHitMomentum; }
 	G4double      GetTrackerHitKineticEnergy() const { return trackerHitKineticEnergy; }

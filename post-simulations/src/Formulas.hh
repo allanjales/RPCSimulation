@@ -30,6 +30,11 @@ public:
 	{
 		return 0.5 * log((p + pz) / (p - pz));
 	}
+
+	static double GetEta(double theta)
+	{
+		return -log(tan(theta / 2));
+	}
 };
 
 #endif

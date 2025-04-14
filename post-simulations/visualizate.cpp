@@ -92,7 +92,7 @@ void visualizate()
 		rKinectEnergy.UpdateRangeValues(KinectEnergy);
 		rMomentum.UpdateRangeValues(Formulas::GetMomentum(MomentumX, MomentumY, MomentumZ));
 		rPt.UpdateRangeValues(Formulas::GetPt(MomentumX, MomentumY));
-		rEta.UpdateRangeValues(Formulas::GetEta(MomentumX, MomentumY, MomentumZ));
+		rEta.UpdateRangeValues(Formulas::GetEta(Formulas::GetTheta(MomentumX, MomentumY, MomentumZ)));
 	}
 
 	cout << "\nCreating histograms\n";
@@ -157,7 +157,7 @@ void visualizate()
 		Phi      = Formulas::GetPhi(MomentumX, MomentumY);
 		Momentum = Formulas::GetMomentum(MomentumX, MomentumY, MomentumZ);
 		Pt       = Formulas::GetPt(MomentumX, MomentumY);
-		Eta      = Formulas::GetEta(MomentumZ, Momentum, Theta);
+		Eta      = Formulas::GetEta(Theta);
 
 		hParticleID.Fill(ParticleID);
 		hParticleIDFullRange.Fill(ParticleID);

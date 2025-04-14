@@ -10,7 +10,7 @@
 #include "ActionInitialization.hh"
 
 // For debug only
-//#undef G4MULTITHREADED
+// #undef G4MULTITHREADED
 
 int main(int argc,char** argv)
 {
@@ -20,7 +20,6 @@ int main(int argc,char** argv)
 	#else
 		G4RunManager *runManager = new G4RunManager();
 	#endif
-	// G4RunManager *runManager = new G4RunManager();
 
 	DetectorConstruction* detector = new DetectorConstruction();
 
